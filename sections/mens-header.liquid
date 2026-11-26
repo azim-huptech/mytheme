@@ -2,13 +2,53 @@
 <script src="{{ 'mens-theme.js' | asset_url }}" defer></script>
 
 {%- assign nav = linklists[section.settings.menu] -%}
+{%- assign klass = 'mens-header' -%}
+{%- if section.settings.transparent -%}{%- assign klass = klass | append: ' mens-header--transparent' -%}{%- endif -%}
+{%- if section.settings.sticky -%}{%- assign klass = klass | append: ' mens-header--sticky' -%}{%- endif -%}
 
-<header class="mens-header" data-mens-header>
-  <div class="mens-wrap">
-    <div class="mens-header__row">
+<header class="{{ klass }}"
+        data-mens-header
+        style="
+          --mens-header-ink: {{ section.settings.text_color }};
+          --mens-header-ink-transparent: {{ section.settings.transparent_text_color }};
+          --mens-header-bg: {{ section.settings.bg_color }};
+          --mens-header-topbar-bg: {{ section.settings.topbar_bg }};
+          --mens-header-topbar-fg: {{ section.settings.topbar_fg }};
+        ">
+  {%- if section.settings.announcement != blank -%}
+    <div class="mens-header__topbar">
+      <div class="mens-wrap mens-header__topbar-inner">
+        <span>{{ section.settings.announcement }}</span>
+        <div class="mens-header__topbar-right">
+          {%- if section.settings.phone != blank -%}
+            <a href="tel:{{ section.settings.phone | strip }}">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="14" height="14"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014.1 2h3a2 2 0 012 1.7c.1.9.3 1.8.6 2.6a2 2 0 01-.5 2.1L8 9.6a16 16 0 006 6l1.2-1.2a2 2 0 012.1-.5c.8.3 1.7.5 2.6.6a2 2 0 011.7 2z"/></svg>
+              {{ section.settings.phone }}
+            </a>
+          {%- endif -%}
+          {%- if shop.customer_accounts_enabled -%}
+            {%- if customer -%}
+              <a href="{{ routes.account_url }}">Hi, {{ customer.first_name | default: 'you' }}</a>
+              <a href="{{ routes.account_logout_url }}">Log out</a>
+            {%- else -%}
+              <a href="{{ routes.account_login_url }}">Sign in</a>
+              <a href="{{ routes.account_register_url }}">Register</a>
+            {%- endif -%}
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  {%- endif -%}
+
+  <div class="mens-header__main">
+    <div class="mens-wrap mens-header__row">
+      <button type="button" class="mens-header__icon mens-header__burger" data-mens-burger aria-label="Open menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+
       <a href="{{ routes.root_url }}" class="mens-header__logo">
         {%- if section.settings.logo != blank -%}
-          {{ section.settings.logo | image_url: width: 240 | image_tag: loading: 'eager', widths: '120,240', alt: shop.name }}
+          {{ section.settings.logo | image_url: width: 300 | image_tag: loading: 'eager', widths: '150,300', alt: shop.name }}
         {%- else -%}
           {{ section.settings.brand_name | default: shop.name }}
         {%- endif -%}
@@ -16,13 +56,24 @@
 
       <nav class="mens-header__nav" data-mens-nav aria-label="Main">
         {%- for link in nav.links -%}
-          <a href="{{ link.url }}">{{ link.title }}</a>
+          {%- if link.links.size > 0 -%}
+            <div class="mens-header__nav-item has-sub">
+              <a href="{{ link.url }}">{{ link.title }} <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12" style="margin-left:4px;"><path d="M6 9l6 6 6-6"/></svg></a>
+              <div class="mens-header__submenu" role="menu">
+                {%- for sub in link.links -%}
+                  <a href="{{ sub.url }}" role="menuitem">{{ sub.title }}</a>
+                {%- endfor -%}
+              </div>
+            </div>
+          {%- else -%}
+            <a href="{{ link.url }}">{{ link.title }}</a>
+          {%- endif -%}
         {%- endfor -%}
         {%- if nav.links.size == 0 -%}
           <a href="{{ routes.root_url }}">Home</a>
           <a href="{{ routes.collections_url }}">Shop</a>
           <a href="{{ routes.collections_url }}">Collections</a>
-          <a href="{{ routes.search_url }}">Search</a>
+          <a href="/pages/about">About</a>
           <a href="/pages/contact">Contact</a>
         {%- endif -%}
       </nav>
@@ -31,23 +82,29 @@
         <button type="button" class="mens-header__icon" data-mens-search-btn aria-label="Search">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="22" height="22"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
         </button>
-        <a href="{{ routes.account_url }}" class="mens-header__icon" aria-label="Account">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="22" height="22"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg>
-        </a>
+        {%- if shop.customer_accounts_enabled -%}
+          <a href="{{ routes.account_url }}" class="mens-header__icon" aria-label="Account">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="22" height="22"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg>
+          </a>
+        {%- endif -%}
+        {%- if section.settings.show_wishlist -%}
+          <a href="/pages/wishlist" class="mens-header__icon" aria-label="Wishlist">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="22" height="22"><path d="M12 21s-7-4.5-9.5-9A5.5 5.5 0 0112 6.5a5.5 5.5 0 019.5 5.5C19 16.5 12 21 12 21z"/></svg>
+          </a>
+        {%- endif -%}
         <a href="{{ routes.cart_url }}" class="mens-header__icon" aria-label="Cart">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="22" height="22"><path d="M6 7h12l-1.5 11.2a2 2 0 01-2 1.8h-5a2 2 0 01-2-1.8L6 7z"/><path d="M9 7V5a3 3 0 016 0v2"/></svg>
           {%- if cart.item_count > 0 -%}
             <span class="mens-header__count">{{ cart.item_count }}</span>
           {%- endif -%}
         </a>
-        <button type="button" class="mens-header__icon mens-header__burger" data-mens-burger aria-label="Menu">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
-        </button>
       </div>
     </div>
+
     <div class="mens-header__search" data-mens-search>
       <form action="{{ routes.search_url }}" method="get" role="search">
-        <input type="text" name="q" placeholder="Search products…" aria-label="Search">
+        <input type="text" name="q" placeholder="{{ section.settings.search_placeholder }}" aria-label="Search" autocomplete="off">
+        <input type="hidden" name="type" value="product">
         <button type="submit" class="mens-btn mens-btn--primary">Search</button>
       </form>
     </div>
@@ -60,9 +117,26 @@
   "tag": "section",
   "class": "mens-header-section",
   "settings": [
+    { "type": "header", "content": "Branding" },
     { "type": "image_picker", "id": "logo", "label": "Logo image" },
-    { "type": "text", "id": "brand_name", "label": "Brand name (if no logo)", "default": "YOURSTORE" },
-    { "type": "link_list", "id": "menu", "label": "Navigation menu", "default": "main-menu" }
+    { "type": "text", "id": "brand_name", "label": "Brand name (used if no logo)", "default": "Clyde and Co" },
+    { "type": "header", "content": "Navigation" },
+    { "type": "link_list", "id": "menu", "label": "Navigation menu", "default": "main-menu" },
+    { "type": "checkbox", "id": "show_wishlist", "label": "Show wishlist icon", "default": false },
+    { "type": "header", "content": "Search" },
+    { "type": "text", "id": "search_placeholder", "label": "Search placeholder", "default": "Search for shirts, jackets, shoes…" },
+    { "type": "header", "content": "Layout" },
+    { "type": "checkbox", "id": "sticky", "label": "Stick to top on scroll", "default": true },
+    { "type": "checkbox", "id": "transparent", "label": "Transparent over first section (home hero)", "default": true },
+    { "type": "paragraph", "content": "When transparent is on, the header floats over the hero banner and uses the Transparent text colour. Once the visitor scrolls past the hero, the header fills in with the normal colours below." },
+    { "type": "color", "id": "bg_color", "label": "Header background (when solid)", "default": "#ffffff" },
+    { "type": "color", "id": "text_color", "label": "Header text (when solid)", "default": "#0f0f10" },
+    { "type": "color", "id": "transparent_text_color", "label": "Header text (when transparent)", "default": "#ffffff" },
+    { "type": "header", "content": "Top bar" },
+    { "type": "text", "id": "announcement", "label": "Announcement", "default": "Get 10% off on every order you place above Rs.4999" },
+    { "type": "text", "id": "phone", "label": "Phone" },
+    { "type": "color", "id": "topbar_bg", "label": "Top bar background", "default": "#0f0f10" },
+    { "type": "color", "id": "topbar_fg", "label": "Top bar text", "default": "#ffffff" }
   ],
   "presets": [ { "name": "Mens header" } ]
 }

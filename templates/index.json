@@ -1,132 +1,391 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "hero": {
-      "type": "mens-hero-slider",
-      "blocks": {
-        "s1": {
-          "type": "slide",
-          "settings": {
-            "eyebrow": "Autumn drop",
-            "heading": "Dress sharp, live bold.",
-            "text": "Premium essentials, tailored for the modern man.",
-            "button_label": "Shop the look",
-            "button_link": "shopify://collections/all",
-            "chip_label": "Oxford Shirt"
-          }
-        },
-        "s2": {
-          "type": "slide",
-          "settings": {
-            "eyebrow": "Best sellers",
-            "heading": "Built to layer, made to last.",
-            "text": "From the hanger to the street — our most loved pieces.",
-            "button_label": "Browse best sellers",
-            "button_link": "shopify://collections/all",
-            "chip_label": "Chore Jacket"
-          }
-        }
-      },
-      "block_order": ["s1", "s2"],
-      "settings": { "autoplay": true, "interval": 6, "text_color": "#ffffff" }
+      "type": "mens-hero-banner",
+      "settings": {
+        "image": "shopify://shop_images/mens-hero-photo.jpg",
+        "eyebrow": "New Collection",
+        "heading": "Wear confidence, own every moment",
+        "subheading": "Elevate your everyday wardrobe with premium essentials, statement pieces, and effortless elegance.",
+        "button_label": "Shop Now",
+        "button_link": "shopify://collections/all",
+        "text_position": "top-left",
+        "max_width": 520,
+        "text_color": "#111111",
+        "overlay_opacity": 0,
+        "aspect_w": 1920,
+        "aspect_h": 1301,
+        "mobile_height": 560
+      }
     },
-
     "trust": {
       "type": "mens-trust-bar",
       "blocks": {
-        "t1": { "type": "trust", "settings": { "icon": "truck",   "heading": "Free shipping",     "text": "On all orders over $75" } },
-        "t2": { "type": "trust", "settings": { "icon": "return",  "heading": "30-day returns",    "text": "Free, hassle-free returns" } },
-        "t3": { "type": "trust", "settings": { "icon": "secure",  "heading": "Secure checkout",   "text": "SSL encrypted payments" } },
-        "t4": { "type": "trust", "settings": { "icon": "support", "heading": "Dedicated support", "text": "Chat with us 7 days a week" } }
+        "t1": {
+          "type": "trust",
+          "settings": {
+            "icon": "truck",
+            "heading": "Free shipping",
+            "text": "On all orders over $75"
+          }
+        },
+        "t2": {
+          "type": "trust",
+          "settings": {
+            "icon": "return",
+            "heading": "30-day returns",
+            "text": "Free, hassle-free returns"
+          }
+        },
+        "t3": {
+          "type": "trust",
+          "settings": {
+            "icon": "secure",
+            "heading": "Secure checkout",
+            "text": "SSL encrypted payments"
+          }
+        },
+        "t4": {
+          "type": "trust",
+          "settings": {
+            "icon": "support",
+            "heading": "Dedicated support",
+            "text": "Chat with us 7 days a week"
+          }
+        }
       },
-      "block_order": ["t1","t2","t3","t4"]
+      "block_order": [
+        "t1",
+        "t2",
+        "t3",
+        "t4"
+      ],
+      "settings": {}
     },
-
     "circles": {
       "type": "mens-category-circles",
       "blocks": {
-        "c1":  { "type": "circle", "settings": { "label": "Sale",        "badge_text": "Sale", "badge_color": "#e03a2f" } },
-        "c2":  { "type": "circle", "settings": { "label": "Shirts" } },
-        "c3":  { "type": "circle", "settings": { "label": "T-Shirts" } },
-        "c4":  { "type": "circle", "settings": { "label": "Jackets" } },
-        "c5":  { "type": "circle", "settings": { "label": "Trousers" } },
-        "c6":  { "type": "circle", "settings": { "label": "Shoes" } },
-        "c7":  { "type": "circle", "settings": { "label": "Hoodies" } },
-        "c8":  { "type": "circle", "settings": { "label": "Watches" } },
-        "c9":  { "type": "circle", "settings": { "label": "Bags" } },
-        "c10": { "type": "circle", "settings": { "label": "Belts" } },
-        "c11": { "type": "circle", "settings": { "label": "Caps" } },
-        "c12": { "type": "circle", "settings": { "label": "Accessories" } }
+        "c1": {
+          "type": "circle",
+          "settings": {
+            "collection": "",
+            "link": "",
+            "label": "Sale",
+            "badge_text": "Sale",
+            "badge_color": "#e03a2f"
+          }
+        },
+        "c2": {
+          "type": "circle",
+          "settings": {
+            "collection": "shirts",
+            "link": "",
+            "label": "Shirts",
+            "badge_text": "",
+            "badge_color": "#e03a2f"
+          }
+        },
+        "c3": {
+          "type": "circle",
+          "settings": {
+            "collection": "tshirts",
+            "link": "",
+            "label": "T-Shirts",
+            "badge_text": "",
+            "badge_color": "#e03a2f"
+          }
+        },
+        "c4": {
+          "type": "circle",
+          "settings": {
+            "collection": "jackets",
+            "link": "",
+            "label": "Jackets",
+            "badge_text": "",
+            "badge_color": "#e03a2f"
+          }
+        },
+        "c5": {
+          "type": "circle",
+          "settings": {
+            "collection": "trousers",
+            "link": "",
+            "label": "Trousers",
+            "badge_text": "",
+            "badge_color": "#e03a2f"
+          }
+        },
+        "c6": {
+          "type": "circle",
+          "settings": {
+            "collection": "hoodies",
+            "link": "",
+            "label": "Hoodies",
+            "badge_text": "",
+            "badge_color": "#e03a2f"
+          }
+        },
+        "c7": {
+          "type": "circle",
+          "settings": {
+            "collection": "",
+            "link": "",
+            "label": "Hoodies",
+            "badge_text": "",
+            "badge_color": "#e03a2f"
+          }
+        },
+        "c8": {
+          "type": "circle",
+          "settings": {
+            "collection": "",
+            "link": "",
+            "label": "Watches",
+            "badge_text": "",
+            "badge_color": "#e03a2f"
+          }
+        },
+        "c9": {
+          "type": "circle",
+          "settings": {
+            "collection": "",
+            "link": "",
+            "label": "Bags",
+            "badge_text": "",
+            "badge_color": "#e03a2f"
+          }
+        },
+        "c10": {
+          "type": "circle",
+          "settings": {
+            "collection": "",
+            "link": "",
+            "label": "Belts",
+            "badge_text": "",
+            "badge_color": "#e03a2f"
+          }
+        },
+        "c11": {
+          "type": "circle",
+          "settings": {
+            "collection": "",
+            "link": "",
+            "label": "Caps",
+            "badge_text": "",
+            "badge_color": "#e03a2f"
+          }
+        },
+        "c12": {
+          "type": "circle",
+          "settings": {
+            "collection": "",
+            "link": "",
+            "label": "Accessories",
+            "badge_text": "",
+            "badge_color": "#e03a2f"
+          }
+        }
       },
-      "block_order": ["c1","c2","c3","c4","c5","c6","c7","c8","c9","c10","c11","c12"],
-      "settings": { "heading": "Shop by category", "eyebrow": "Browse" }
+      "block_order": [
+        "c1",
+        "c2",
+        "c3",
+        "c4",
+        "c5",
+        "c6",
+        "c7",
+        "c8",
+        "c9",
+        "c10",
+        "c11",
+        "c12"
+      ],
+      "settings": {
+        "eyebrow": "Browse",
+        "heading": "Shop by category"
+      }
     },
-
     "featured_tabs": {
       "type": "mens-featured-tabs",
       "blocks": {
-        "tab1": { "type": "tab", "settings": { "tab_label": "What's hot" } },
-        "tab2": { "type": "tab", "settings": { "tab_label": "Best sellers" } },
-        "tab3": { "type": "tab", "settings": { "tab_label": "Sale" } }
+        "tab1": {
+          "type": "tab",
+          "settings": {
+            "tab_label": "What's hot",
+            "collection": "shirts"
+          }
+        },
+        "tab2": {
+          "type": "tab",
+          "settings": {
+            "tab_label": "Best sellers",
+            "collection": "new-arrivals"
+          }
+        },
+        "tab3": {
+          "type": "tab",
+          "settings": {
+            "tab_label": "Sale",
+            "collection": "hoodies"
+          }
+        }
       },
-      "block_order": ["tab1","tab2","tab3"],
+      "block_order": [
+        "tab1",
+        "tab2",
+        "tab3"
+      ],
       "settings": {
+        "background": "#ffffff",
         "products_to_show": 8,
         "columns_desktop": "4",
         "view_all_label": "Shop All Products",
-        "view_all_link": "shopify://collections/all",
-        "background": "#ffffff"
+        "view_all_link": "shopify://collections/all"
       }
     },
-
     "promos": {
       "type": "mens-promo-banners",
       "blocks": {
-        "p1": { "type": "banner", "settings": { "heading": "Autumn Shirts", "text": "Elevate your wardrobe with 40% off hand-picked styles.", "button_label": "Shop Now", "button_link": "shopify://collections/all", "tone": "sand", "background_color": "#ece2cf", "save_amount": "40%", "save_color": "#f4e872" } },
-        "p2": { "type": "banner", "settings": { "heading": "Chore Jackets", "text": "Timeless layering pieces, now 30% off.",             "button_label": "Shop Now", "button_link": "shopify://collections/all", "tone": "mint", "background_color": "#d5ecd8", "save_amount": "30%", "save_color": "#e03a2f" } }
+        "p1": {
+          "type": "banner",
+          "settings": {
+            "eyebrow": "Season sale",
+            "heading": "Autumn Shirts",
+            "text": "Elevate your wardrobe with 40% off hand-picked styles.",
+            "button_label": "Shop Now",
+            "button_link": "shopify://collections/all",
+            "background_color": "#ece2cf",
+            "text_color": "#0f0f10",
+            "tone": "sand",
+            "save_amount": "40%",
+            "save_color": "#f4e872"
+          }
+        },
+        "p2": {
+          "type": "banner",
+          "settings": {
+            "eyebrow": "Layering",
+            "heading": "Chore Jackets",
+            "text": "Timeless layering pieces, now 30% off.",
+            "button_label": "Shop Now",
+            "button_link": "shopify://collections/all",
+            "background_color": "#d5ecd8",
+            "text_color": "#0f0f10",
+            "tone": "mint",
+            "save_amount": "30%",
+            "save_color": "#e03a2f"
+          }
+        }
       },
-      "block_order": ["p1","p2"]
+      "block_order": [
+        "p1",
+        "p2"
+      ],
+      "settings": {}
     },
-
     "showcase": {
       "type": "mens-collection-showcase",
       "blocks": {
-        "cc1": { "type": "card", "settings": { "heading": "Shirts" } },
-        "cc2": { "type": "card", "settings": { "heading": "Jackets" } },
-        "cc3": { "type": "card", "settings": { "heading": "Trousers" } },
-        "cc4": { "type": "card", "settings": { "heading": "Shoes" } },
-        "cc5": { "type": "card", "settings": { "heading": "Accessories" } }
+        "cc1": {
+          "type": "card",
+          "settings": {
+            "collection": "shirts",
+            "heading": "Shirts",
+            "subtitle": "",
+            "link": ""
+          }
+        },
+        "cc2": {
+          "type": "card",
+          "settings": {
+            "collection": "jackets",
+            "heading": "Jackets",
+            "subtitle": "",
+            "link": ""
+          }
+        },
+        "cc3": {
+          "type": "card",
+          "settings": {
+            "collection": "trousers",
+            "heading": "Trousers",
+            "subtitle": "",
+            "link": ""
+          }
+        },
+        "cc4": {
+          "type": "card",
+          "settings": {
+            "collection": "",
+            "heading": "Shoes",
+            "subtitle": "",
+            "link": ""
+          }
+        },
+        "cc5": {
+          "type": "card",
+          "settings": {
+            "collection": "",
+            "heading": "Accessories",
+            "subtitle": "",
+            "link": ""
+          }
+        }
       },
-      "block_order": ["cc1","cc2","cc3","cc4","cc5"],
+      "block_order": [
+        "cc1",
+        "cc2",
+        "cc3",
+        "cc4",
+        "cc5"
+      ],
       "settings": {
         "eyebrow": "Shop the edit",
         "heading": "Men's essentials",
         "description": "Thoughtfully crafted pieces that last — built for your everyday rotation."
       }
     },
-
     "best_sellers": {
       "type": "mens-best-sellers",
       "settings": {
         "eyebrow": "Most loved",
         "heading": "Best sellers",
+        "collection": "",
         "products_to_show": 8,
         "columns_desktop": "4",
         "view_all_label": "Shop all",
-        "view_all_link": "shopify://collections/all",
-        "soft_background": true
+        "view_all_link": "shopify://collections/tshirts",
+        "soft_background": false
       }
     },
-
     "contact": {
       "type": "mens-contact",
       "settings": {
-        "eyebrow": "Contact",
-        "heading": "We're here to help.",
-        "subheading": "Questions about sizing, orders or anything else — drop us a line and we'll reply within one business day.",
+        "background": "#ffffff",
+        "side_background": "#0f0f10",
+        "side_text": "#ffffff",
+        "eyebrow": "Get in touch",
+        "heading": "Let's talk.",
+        "subheading": "Sizing questions, orders or anything else — drop us a line and we'll reply within one business day.",
         "address": "221B Baker Street, London",
         "phone": "+1 (555) 123-4567",
         "email": "support@yourstore.com",
-        "hours": "Mon – Sat, 10am – 7pm"
+        "hours": "Mon – Sat, 10am – 7pm",
+        "instagram": "",
+        "facebook": "",
+        "tiktok": "",
+        "form_title": "Send a message",
+        "form_subtitle": "We'll get back to you within one business day.",
+        "button_label": "Send message"
       }
     }
   },

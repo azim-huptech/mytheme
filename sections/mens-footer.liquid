@@ -1,27 +1,61 @@
 {{ 'mens-theme.css' | asset_url | stylesheet_tag }}
 
-<footer class="mens-footer">
+<footer class="mens-footer" style="
+  --mens-footer-bg: {{ section.settings.bg_color }};
+  --mens-footer-fg: {{ section.settings.text_color }};
+  --mens-footer-accent: {{ section.settings.accent_color }};
+">
   <div class="mens-wrap">
-    <div class="mens-footer__grid">
+    <div class="mens-footer__news-row">
+      <div>
+        <h2 class="mens-footer__news-heading">{{ section.settings.newsletter_heading }}</h2>
+        <p class="mens-footer__news-copy">{{ section.settings.newsletter_text }}</p>
+      </div>
+      {%- form 'customer', id: 'MensFooterNewsletter', class: 'mens-footer__news-form' -%}
+        <input type="hidden" name="contact[tags]" value="newsletter">
+        <input type="email" name="contact[email]" placeholder="Enter your email" aria-label="Email" required>
+        <button type="submit">Subscribe <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14" style="margin-left:4px;"><path d="M5 12h14M13 5l7 7-7 7"/></svg></button>
+        {%- if form.posted_successfully? -%}
+          <span class="mens-footer__news-done">Thanks for subscribing!</span>
+        {%- endif -%}
+      {%- endform -%}
+    </div>
 
+    <div class="mens-footer__grid">
       <div class="mens-footer__brand">
         {%- if section.settings.logo != blank -%}
-          {{ section.settings.logo | image_url: width: 300 | image_tag: loading: 'lazy', widths: '150,300', alt: shop.name, class: 'mens-footer__logo' }}
+          {{ section.settings.logo | image_url: width: 320 | image_tag: loading: 'lazy', widths: '160,320', alt: shop.name, class: 'mens-footer__logo' }}
         {%- else -%}
           <h3>{{ section.settings.brand_name | default: shop.name }}</h3>
         {%- endif -%}
-        <p>{{ section.settings.tagline }}</p>
+        {%- if section.settings.tagline != blank -%}
+          <p class="mens-footer__tagline">{{ section.settings.tagline }}</p>
+        {%- endif -%}
+
+        <ul class="mens-footer__contact">
+          {%- if section.settings.address != blank -%}
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="16" height="16"><path d="M12 22s7-7 7-13a7 7 0 10-14 0c0 6 7 13 7 13z"/><circle cx="12" cy="9" r="2.5"/></svg><span>{{ section.settings.address }}</span></li>
+          {%- endif -%}
+          {%- if section.settings.phone != blank -%}
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="16" height="16"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014.1 2h3a2 2 0 012 1.7"/></svg><a href="tel:{{ section.settings.phone | strip }}">{{ section.settings.phone }}</a></li>
+          {%- endif -%}
+          {%- if section.settings.email != blank -%}
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="16" height="16"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg><a href="mailto:{{ section.settings.email }}">{{ section.settings.email }}</a></li>
+          {%- endif -%}
+        </ul>
+
         <div class="mens-footer__social">
           {%- for block in section.blocks -%}
-            {%- if block.type == 'social' -%}
-              <a href="{{ block.settings.link }}" aria-label="{{ block.settings.label }}" {{ block.shopify_attributes }}>
+            {%- if block.type == 'social' and block.settings.link != blank -%}
+              <a href="{{ block.settings.link }}" aria-label="{{ block.settings.label }}" target="_blank" rel="noopener" {{ block.shopify_attributes }}>
                 {%- case block.settings.network -%}
-                  {%- when 'instagram' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
-                  {%- when 'facebook' -%}<svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M13.5 22v-8h2.7l.4-3.1h-3.1V8.9c0-.9.3-1.5 1.6-1.5h1.6V4.6c-.3 0-1.3-.1-2.4-.1-2.3 0-3.9 1.4-3.9 4v2.4H7.6V14h2.8v8h3.1z"/></svg>
-                  {%- when 'tiktok' -%}<svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M20 8.5a7 7 0 01-4-1.3V15a6 6 0 11-6-6v3a3 3 0 103 3V2h3a4 4 0 004 4v2.5z"/></svg>
-                  {%- when 'youtube' -%}<svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M22 8.1c-.2-1.4-.8-2.4-2.3-2.6C17.3 5 12 5 12 5s-5.3 0-7.7.5C2.8 5.7 2.2 6.7 2 8.1 1.5 10.5 1.5 12 1.5 12s0 1.5.5 3.9c.2 1.4.8 2.4 2.3 2.6 2.4.5 7.7.5 7.7.5s5.3 0 7.7-.5c1.5-.2 2.1-1.2 2.3-2.6.5-2.4.5-3.9.5-3.9s0-1.5-.5-3.9zM10 15V9l5 3-5 3z"/></svg>
-                  {%- when 'x' -%}<svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M18 3h3l-7.3 8.3L22 21h-6l-5-6-6 6H2l7.8-8.8L2 3h6l4.5 5.5L18 3z"/></svg>
-                  {%- else -%}<svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><circle cx="12" cy="12" r="3"/></svg>
+                  {%- when 'instagram' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="18" height="18"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
+                  {%- when 'facebook' -%}<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M13.5 22v-8h2.7l.4-3.1h-3.1V8.9c0-.9.3-1.5 1.6-1.5h1.6V4.6c-.3 0-1.3-.1-2.4-.1-2.3 0-3.9 1.4-3.9 4v2.4H7.6V14h2.8v8h3.1z"/></svg>
+                  {%- when 'tiktok' -%}<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M20 8.5a7 7 0 01-4-1.3V15a6 6 0 11-6-6v3a3 3 0 103 3V2h3a4 4 0 004 4v2.5z"/></svg>
+                  {%- when 'youtube' -%}<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M22 8.1c-.2-1.4-.8-2.4-2.3-2.6C17.3 5 12 5 12 5s-5.3 0-7.7.5C2.8 5.7 2.2 6.7 2 8.1 1.5 10.5 1.5 12 1.5 12s0 1.5.5 3.9c.2 1.4.8 2.4 2.3 2.6 2.4.5 7.7.5 7.7.5s5.3 0 7.7-.5c1.5-.2 2.1-1.2 2.3-2.6.5-2.4.5-3.9.5-3.9s0-1.5-.5-3.9zM10 15V9l5 3-5 3z"/></svg>
+                  {%- when 'x' -%}<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M18 3h3l-7.3 8.3L22 21h-6l-5-6-6 6H2l7.8-8.8L2 3h6l4.5 5.5L18 3z"/></svg>
+                  {%- when 'pinterest' -%}<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M12 2a10 10 0 00-3.6 19.3c-.1-.8-.2-2 0-2.9l1.3-5.4s-.3-.6-.3-1.6c0-1.5.9-2.6 2-2.6.9 0 1.4.7 1.4 1.5 0 .9-.6 2.3-.9 3.6-.3 1 .5 1.9 1.6 1.9 1.9 0 3.4-2 3.4-4.9 0-2.6-1.8-4.4-4.5-4.4-3 0-4.8 2.3-4.8 4.6 0 .9.4 1.9.8 2.5l-.3 1.2c-.1.2-.2.3-.5.2-1.3-.6-2.2-2.5-2.2-4 0-3.3 2.4-6.3 6.9-6.3 3.6 0 6.4 2.6 6.4 6 0 3.6-2.3 6.5-5.4 6.5-1 0-2-.5-2.4-1.2l-.6 2.4c-.2.9-.9 2-1.3 2.7A10 10 0 1012 2z"/></svg>
+                  {%- else -%}<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><circle cx="12" cy="12" r="3"/></svg>
                 {%- endcase -%}
               </a>
             {%- endif -%}
@@ -35,40 +69,53 @@
           <div class="mens-footer__col" {{ block.shopify_attributes }}>
             <h4>{{ block.settings.heading }}</h4>
             <ul>
-              {%- for link in m.links -%}
-                <li><a href="{{ link.url }}">{{ link.title }}</a></li>
-              {%- endfor -%}
-              {%- if m.links.size == 0 -%}
-                <li><a href="#">About us</a></li>
-                <li><a href="#">Shipping & returns</a></li>
-                <li><a href="#">Size guide</a></li>
-                <li><a href="#">FAQ</a></li>
+              {%- if m.links.size > 0 -%}
+                {%- for link in m.links -%}
+                  <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+                {%- endfor -%}
+              {%- else -%}
+                {%- assign heading_key = block.settings.heading | downcase -%}
+                {%- case heading_key -%}
+                  {%- when 'shop' -%}
+                    <li><a href="{{ routes.collections_url }}">All Collections</a></li>
+                    <li><a href="{{ routes.collections_url }}">New Arrivals</a></li>
+                    <li><a href="{{ routes.collections_url }}">Best Sellers</a></li>
+                    <li><a href="{{ routes.collections_url }}">Sale</a></li>
+                  {%- when 'help' -%}
+                    <li><a href="/pages/shipping">Shipping & Delivery</a></li>
+                    <li><a href="/pages/returns">Returns & Exchanges</a></li>
+                    <li><a href="/pages/size-guide">Size Guide</a></li>
+                    <li><a href="/pages/faq">FAQ</a></li>
+                  {%- when 'company' -%}
+                    <li><a href="/pages/about">About Us</a></li>
+                    <li><a href="/pages/contact">Contact</a></li>
+                    <li><a href="/pages/stores">Store Locator</a></li>
+                    <li><a href="/blogs/news">Journal</a></li>
+                  {%- else -%}
+                    <li><a href="/policies/privacy-policy">Privacy Policy</a></li>
+                    <li><a href="/policies/terms-of-service">Terms of Service</a></li>
+                {%- endcase -%}
               {%- endif -%}
             </ul>
           </div>
         {%- endif -%}
       {%- endfor -%}
-
-      <div class="mens-footer__news">
-        <h4>{{ section.settings.newsletter_heading }}</h4>
-        <p>{{ section.settings.newsletter_text }}</p>
-        {%- form 'customer', id: 'MensFooterNewsletter', class: '' -%}
-          <input type="hidden" name="contact[tags]" value="newsletter">
-          <input type="email" name="contact[email]" placeholder="Enter your email" required>
-          <button type="submit">Subscribe</button>
-        {%- endform -%}
-      </div>
     </div>
 
     <div class="mens-footer__bottom">
-      <div>© {{ 'now' | date: '%Y' }} {{ shop.name }}. {{ section.settings.rights | default: 'All rights reserved.' }}</div>
-      <div>
-        {%- if shop.enabled_payment_types.size > 0 -%}
-          {%- for type in shop.enabled_payment_types -%}
-            <span style="display:inline-block; margin-left:6px;">{{ type | payment_type_svg_tag: class: 'payment-icon' }}</span>
-          {%- endfor -%}
-        {%- endif -%}
+      <div class="mens-footer__legal">
+        <span>© {{ 'now' | date: '%Y' }} {{ shop.name }}. {{ section.settings.rights | default: 'All rights reserved.' }}</span>
+        <a href="/policies/privacy-policy">Privacy</a>
+        <a href="/policies/terms-of-service">Terms</a>
+        <a href="/policies/refund-policy">Refunds</a>
       </div>
+      {%- if section.settings.show_payments -%}
+        <div class="mens-footer__pay">
+          {%- for type in shop.enabled_payment_types -%}
+            {{ type | payment_type_svg_tag: class: 'payment-icon' }}
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
     </div>
   </div>
 </footer>
@@ -78,14 +125,24 @@
   "name": "Mens footer",
   "tag": "section",
   "class": "mens-footer-section",
-  "max_blocks": 8,
+  "max_blocks": 14,
   "settings": [
-    { "type": "image_picker", "id": "logo", "label": "Logo" },
-    { "type": "text", "id": "brand_name", "label": "Brand name", "default": "YOURSTORE" },
+    { "type": "header", "content": "Colours" },
+    { "type": "color", "id": "bg_color", "label": "Background", "default": "#0f0f10" },
+    { "type": "color", "id": "text_color", "label": "Text", "default": "#cfcfd3" },
+    { "type": "color", "id": "accent_color", "label": "Accent", "default": "#c8a46a" },
+    { "type": "header", "content": "Brand" },
+    { "type": "image_picker", "id": "logo", "label": "Logo (light)" },
+    { "type": "text", "id": "brand_name", "label": "Brand name", "default": "Clyde and Co" },
     { "type": "textarea", "id": "tagline", "label": "Tagline", "default": "Timeless menswear essentials — made to last, priced to love." },
+    { "type": "text", "id": "address", "label": "Address", "default": "221B Baker Street, London, NW1 6XE" },
+    { "type": "text", "id": "phone", "label": "Phone", "default": "+91 98250 00000" },
+    { "type": "text", "id": "email", "label": "Email", "default": "support@clydeandco.com" },
     { "type": "header", "content": "Newsletter" },
-    { "type": "text", "id": "newsletter_heading", "label": "Heading", "default": "Join the club" },
+    { "type": "text", "id": "newsletter_heading", "label": "Heading", "default": "Join the Clyde & Co club" },
     { "type": "text", "id": "newsletter_text", "label": "Text", "default": "Get 10% off your first order + early access to drops." },
+    { "type": "header", "content": "Bottom" },
+    { "type": "checkbox", "id": "show_payments", "label": "Show payment icons", "default": true },
     { "type": "text", "id": "rights", "label": "Rights text", "default": "All rights reserved." }
   ],
   "blocks": [
@@ -106,7 +163,8 @@
           { "value": "facebook", "label": "Facebook" },
           { "value": "tiktok", "label": "TikTok" },
           { "value": "youtube", "label": "YouTube" },
-          { "value": "x", "label": "X / Twitter" }
+          { "value": "x", "label": "X / Twitter" },
+          { "value": "pinterest", "label": "Pinterest" }
         ], "default": "instagram" },
         { "type": "url", "id": "link", "label": "URL" },
         { "type": "text", "id": "label", "label": "Accessibility label", "default": "Follow us" }
@@ -122,7 +180,8 @@
         { "type": "menu", "settings": { "heading": "Company" } },
         { "type": "social", "settings": { "network": "instagram" } },
         { "type": "social", "settings": { "network": "facebook" } },
-        { "type": "social", "settings": { "network": "tiktok" } }
+        { "type": "social", "settings": { "network": "tiktok" } },
+        { "type": "social", "settings": { "network": "pinterest" } }
       ]
     }
   ]

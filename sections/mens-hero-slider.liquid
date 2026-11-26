@@ -5,34 +5,28 @@
          data-mens-hero
          data-autoplay="{{ section.settings.autoplay }}"
          data-interval="{{ section.settings.interval | times: 1000 }}"
-         style="--mens-ink: {{ section.settings.text_color }};">
+         style="--mens-hero-height: {{ section.settings.height }}px; --mens-ink: {{ section.settings.text_color }};">
   <div class="mens-hero__track" data-mens-hero-track>
     {%- for block in section.blocks -%}
       <div class="mens-hero__slide" data-mens-hero-slide {{ block.shopify_attributes }}>
-        {%- if block.settings.image != blank -%}
-          {{ block.settings.image | image_url: width: 2200 | image_tag:
-            loading: forloop.first | default: false,
-            widths: '720,1100,1600,2000,2400',
-            sizes: '100vw',
-            class: 'mens-hero__img',
-            alt: block.settings.heading | default: block.settings.image.alt | escape }}
-        {%- else -%}
-          <div class="mens-hero__img" style="background: linear-gradient(120deg,#1b1b1f,#3a3a40);"></div>
-        {%- endif -%}
+        <div class="mens-hero__media">
+          {%- if block.settings.image != blank -%}
+            {{ block.settings.image | image_url: width: 2400 | image_tag:
+              loading: forloop.first | default: false,
+              widths: '720,1100,1600,2000,2400',
+              sizes: '100vw',
+              class: 'mens-hero__img',
+              alt: block.settings.heading | default: block.settings.image.alt | escape }}
+          {%- else -%}
+            <img class="mens-hero__img" src="{{ 'mens-hero-photo.jpg' | asset_url }}" alt="{{ block.settings.heading | default: 'Mens hero' | escape }}">
+          {%- endif -%}
+        </div>
         <div class="mens-hero__overlay"></div>
         <div class="mens-hero__inner">
-          {%- if block.settings.eyebrow != blank -%}
-            <span class="mens-hero__eyebrow">{{ block.settings.eyebrow }}</span>
-          {%- endif -%}
-          {%- if block.settings.heading != blank -%}
-            <h2 class="mens-hero__title">{{ block.settings.heading }}</h2>
-          {%- endif -%}
-          {%- if block.settings.text != blank -%}
-            <p class="mens-hero__text">{{ block.settings.text }}</p>
-          {%- endif -%}
-          {%- if block.settings.button_label != blank -%}
-            <a href="{{ block.settings.button_link }}" class="mens-btn mens-btn--light">{{ block.settings.button_label }}</a>
-          {%- endif -%}
+          {%- if block.settings.eyebrow != blank -%}<span class="mens-hero__eyebrow">{{ block.settings.eyebrow }}</span>{%- endif -%}
+          {%- if block.settings.heading != blank -%}<h2 class="mens-hero__title">{{ block.settings.heading }}</h2>{%- endif -%}
+          {%- if block.settings.text != blank -%}<p class="mens-hero__text">{{ block.settings.text }}</p>{%- endif -%}
+          {%- if block.settings.button_label != blank -%}<a href="{{ block.settings.button_link }}" class="mens-btn mens-btn--light">{{ block.settings.button_label }}</a>{%- endif -%}
         </div>
         {%- if block.settings.chip_label != blank -%}
           <a href="{{ block.settings.chip_link }}" class="mens-hero__chip">
@@ -65,17 +59,20 @@
   "class": "mens-hero-wrap",
   "max_blocks": 6,
   "settings": [
+    { "type": "header", "content": "Layout" },
+    { "type": "range", "id": "height", "label": "Slide height", "unit": "px", "min": 380, "max": 820, "step": 10, "default": 620 },
     { "type": "header", "content": "Behaviour" },
     { "type": "checkbox", "id": "autoplay", "label": "Autoplay", "default": true },
     { "type": "range", "id": "interval", "label": "Autoplay interval", "unit": "s", "min": 3, "max": 12, "step": 1, "default": 6 },
-    { "type": "color", "id": "text_color", "label": "Text accent", "default": "#ffffff" }
+    { "type": "color", "id": "text_color", "label": "Text accent", "default": "#ffffff" },
+    { "type": "paragraph", "content": "Recommended image ratio: 16:7 (eg 1920 × 840 px). Images are always cropped to fit the slide height — the slide never grows with the image. Leave the image empty on a slide to use the bundled mens-hero-photo.jpg artwork." }
   ],
   "blocks": [
     {
       "type": "slide",
       "name": "Slide",
       "settings": [
-        { "type": "image_picker", "id": "image", "label": "Background image" },
+        { "type": "image_picker", "id": "image", "label": "Background image (leave empty to use bundled default)" },
         { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "New arrivals" },
         { "type": "text", "id": "heading", "label": "Heading", "default": "Dress sharp, live bold." },
         { "type": "textarea", "id": "text", "label": "Description", "default": "Premium essentials, tailored for the modern man." },

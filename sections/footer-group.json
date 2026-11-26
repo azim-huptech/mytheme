@@ -1,35 +1,34 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
   "name": "t:sections.footer.name",
   "type": "footer",
   "sections": {
-    "footer": {
-      "type": "footer",
+    "mens-footer": {
+      "type": "mens-footer",
+      "blocks": {
+        "shop":    { "type": "menu",   "settings": { "heading": "Shop",    "menu": "footer" } },
+        "help":    { "type": "menu",   "settings": { "heading": "Help",    "menu": "footer" } },
+        "company": { "type": "menu",   "settings": { "heading": "Company", "menu": "footer" } },
+        "sm1":     { "type": "social", "settings": { "network": "instagram", "link": "https://instagram.com", "label": "Instagram" } },
+        "sm2":     { "type": "social", "settings": { "network": "facebook",  "link": "https://facebook.com",  "label": "Facebook" } },
+        "sm3":     { "type": "social", "settings": { "network": "tiktok",    "link": "https://tiktok.com",    "label": "TikTok" } },
+        "sm4":     { "type": "social", "settings": { "network": "pinterest", "link": "https://pinterest.com", "label": "Pinterest" } }
+      },
+      "block_order": ["shop", "help", "company", "sm1", "sm2", "sm3", "sm4"],
       "settings": {
-        "color_scheme": "scheme-1",
-        "newsletter_enable": true,
-        "newsletter_heading": "Subscribe to our emails",
-        "enable_follow_on_shop": true,
-        "show_social": true,
-        "enable_country_selector": true,
-        "enable_language_selector": true,
-        "payment_enable": true,
-        "show_policy": true,
-        "margin_top": 0,
-        "padding_top": 36,
-        "padding_bottom": 36
+        "bg_color": "#0f0f10",
+        "text_color": "#cfcfd3",
+        "accent_color": "#c8a46a",
+        "brand_name": "Clyde and Co",
+        "tagline": "Timeless menswear essentials — made to last, priced to love.",
+        "address": "221B Baker Street, London, NW1 6XE",
+        "phone": "+91 98250 00000",
+        "email": "support@clydeandco.com",
+        "newsletter_heading": "Join the Clyde & Co club",
+        "newsletter_text": "Get 10% off your first order + early access to drops.",
+        "show_payments": true,
+        "rights": "All rights reserved."
       }
     }
   },
-  "order": [
-    "footer"
-  ]
+  "order": ["mens-footer"]
 }

@@ -1,6 +1,6 @@
 /* Small vanilla behaviours for the custom mens sections */
 (function () {
-  // ---- Hero slider ----
+  // ---- Hero slider (still supported for the legacy mens-hero-slider section) ----
   document.querySelectorAll('[data-mens-hero]').forEach((hero) => {
     const track = hero.querySelector('[data-mens-hero-track]');
     const slides = hero.querySelectorAll('[data-mens-hero-slide]');
@@ -42,7 +42,9 @@
   // ---- Featured tabs ----
   document.querySelectorAll('[data-mens-tabs]').forEach((tabs) => {
     const buttons = tabs.querySelectorAll('[data-mens-tab-btn]');
-    const panels = tabs.querySelectorAll('[data-mens-tab-panel]');
+    // Panels can live outside the tabs element; scope to the enclosing section
+    const scope = tabs.closest('section') || document;
+    const panels = scope.querySelectorAll('[data-mens-tab-panel]');
     buttons.forEach((btn) => {
       btn.addEventListener('click', () => {
         const key = btn.dataset.key;
@@ -78,6 +80,19 @@
       }
     });
   });
+
+  // ---- Transparent header: add .is-scrolled after the hero ----
+  (function () {
+    const header = document.querySelector('.mens-header--transparent');
+    if (!header) return;
+    const threshold = 80;
+    const onScroll = () => {
+      const y = window.scrollY || window.pageYOffset;
+      header.classList.toggle('is-scrolled', y > threshold);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  })();
 
   // ---- Cart free-shipping bar ----
   document.querySelectorAll('[data-mens-shipbar]').forEach((el) => {

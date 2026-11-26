@@ -22,17 +22,19 @@
           {%- assign col = block.settings.collection -%}
           {%- assign fallback_img = block.settings.image -%}
           <a href="{{ block.settings.link | default: col.url }}" class="mens-showcase__card" {{ block.shopify_attributes }}>
-            {%- if fallback_img != blank -%}
-              {{ fallback_img | image_url: width: 600 | image_tag: loading: 'lazy', widths: '320,480,600', sizes: '300px', class: 'mens-showcase__img', alt: block.settings.heading | escape }}
-            {%- elsif col.featured_image != blank -%}
-              {{ col.featured_image | image_url: width: 600 | image_tag: loading: 'lazy', widths: '320,480,600', sizes: '300px', class: 'mens-showcase__img', alt: col.title | escape }}
-            {%- else -%}
-              {{ 'collection-1' | placeholder_svg_tag: 'placeholder-svg mens-showcase__img' }}
-            {%- endif -%}
+            <div class="mens-showcase__card-media">
+              {%- if fallback_img != blank -%}
+                {{ fallback_img | image_url: width: 600 | image_tag: loading: 'lazy', widths: '320,480,600', sizes: '300px', class: 'mens-showcase__img', alt: block.settings.heading | escape }}
+              {%- elsif col.featured_image != blank -%}
+                {{ col.featured_image | image_url: width: 600 | image_tag: loading: 'lazy', widths: '320,480,600', sizes: '300px', class: 'mens-showcase__img', alt: col.title | escape }}
+              {%- else -%}
+                {{ 'collection-1' | placeholder_svg_tag: 'placeholder-svg mens-showcase__img' }}
+              {%- endif -%}
+            </div>
             <div class="mens-showcase__meta">
               <div>
                 <h3>{{ block.settings.heading | default: col.title }}</h3>
-                <p>{{ col.all_products_count | default: block.settings.subtitle | default: 'View collection' }}{% if col.all_products_count > 0 %} items{% endif %}</p>
+                <p>{%- if col.all_products_count > 0 -%}{{ col.all_products_count }} items{%- else -%}{{ block.settings.subtitle | default: 'View collection' }}{%- endif -%}</p>
               </div>
               <span class="mens-showcase__go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
             </div>
@@ -52,7 +54,8 @@
   "settings": [
     { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Shop the edit" },
     { "type": "text", "id": "heading", "label": "Heading", "default": "Men's essentials" },
-    { "type": "textarea", "id": "description", "label": "Description", "default": "Thoughtfully crafted pieces that last — built for your everyday rotation." }
+    { "type": "textarea", "id": "description", "label": "Description", "default": "Thoughtfully crafted pieces that last — built for your everyday rotation." },
+    { "type": "paragraph", "content": "Each card uses a fixed 1:1 image area. Any image you upload is cropped to fit — the card never grows with the image." }
   ],
   "blocks": [
     {

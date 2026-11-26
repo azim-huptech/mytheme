@@ -15,7 +15,7 @@
 
     <div class="mens-circles">
       {%- for block in section.blocks -%}
-        {%- assign col = block.settings.collection -%}
+        {%- assign col = collections[block.settings.collection] -%}
         {%- assign href = block.settings.link | default: col.url | default: '#' -%}
         <a href="{{ href }}" class="mens-circle" {{ block.shopify_attributes }}>
           {%- if block.settings.badge_text != blank -%}

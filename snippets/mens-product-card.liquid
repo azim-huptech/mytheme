@@ -2,7 +2,7 @@
   Renders a product card for the mens store sections.
 
   @param {object} product - The product object to render.
-  @param {boolean} [show_quick_add] - Show the "Choose Options" hover action.
+  @param {boolean} [show_quick_add] - Only shows the "Choose Options" button when the product has real variant options AND is in stock.
   @param {boolean} [show_vendor] - Show the vendor / product type label.
   @param {string} [badge_sold_out_text] - Optional override text for the "sold out" badge.
 
@@ -16,23 +16,43 @@
     assign on_sale = true
     assign discount_pct = product.compare_at_price | minus: product.price | times: 100 | divided_by: product.compare_at_price
   endif
+
   assign is_new = false
-  assign days_since_publish = 'now' | date: '%s' | minus: product.published_at | date: '%s' | divided_by: 86400
-  if days_since_publish < 30
-    assign is_new = true
+  if product.published_at != blank
+    assign days_since_publish = 'now' | date: '%s' | minus: product.published_at | date: '%s' | divided_by: 86400
+    if days_since_publish < 30
+      assign is_new = true
+    endif
   endif
+
   assign selling_fast = false
   if product.inventory_management and product.selected_or_first_available_variant.inventory_quantity > 0 and product.selected_or_first_available_variant.inventory_quantity < 6
     assign selling_fast = true
   endif
+
   assign primary = product.featured_image
   assign secondary = product.images[1] | default: primary
+
+  assign has_options = false
+  if product.has_only_default_variant == false and product.variants.size > 1
+    assign has_options = true
+  endif
+
+  assign show_hover_cta = false
+  if has_options and product.available
+    assign show_hover_cta = true
+  endif
+
+  assign has_image = false
+  if primary != blank
+    assign has_image = true
+  endif
 -%}
 
-<article class="mens-card" data-mens-card>
+<article class="mens-card{% unless has_image %} mens-card--no-image{% endunless %}{% unless product.available %} mens-card--sold-out{% endunless %}" data-mens-card>
   <div class="mens-card__media">
     <a href="{{ product.url }}" aria-label="{{ product.title | escape }}">
-      {%- if primary != blank -%}
+      {%- if has_image -%}
         {{ primary | image_url: width: 600 | image_tag:
           loading: 'lazy',
           widths: '220,320,480,640',
@@ -53,26 +73,23 @@
     </a>
 
     <div class="mens-card__badges">
-      {%- if on_sale -%}
-        <span class="mens-badge mens-badge--sale">-{{ discount_pct }}%</span>
-      {%- endif -%}
-      {%- if is_new -%}
-        <span class="mens-badge mens-badge--new">New</span>
-      {%- endif -%}
-      {%- if selling_fast -%}
-        <span class="mens-badge mens-badge--fast">Selling fast!</span>
-      {%- endif -%}
       {%- if product.available == false -%}
-        <span class="mens-badge mens-badge--fast">{{ badge_sold_out_text | default: 'Sold out' }}</span>
+        <span class="mens-badge mens-badge--soldout">{{ badge_sold_out_text | default: 'Sold out' }}</span>
+      {%- else -%}
+        {%- if on_sale -%}<span class="mens-badge mens-badge--sale">-{{ discount_pct }}%</span>{%- endif -%}
+        {%- if is_new -%}<span class="mens-badge mens-badge--new">New</span>{%- endif -%}
+        {%- if selling_fast -%}<span class="mens-badge mens-badge--fast">Selling fast!</span>{%- endif -%}
       {%- endif -%}
     </div>
 
-    <a href="{{ product.url }}" class="mens-card__quick" aria-label="Quick view {{ product.title | escape }}">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"/></svg>
-    </a>
-
-    {%- if show_quick_add -%}
-      <a href="{{ product.url }}" class="mens-card__options">Choose Options</a>
+    {%- if show_hover_cta -%}
+      {# Only shown when the product has real variant options AND is available #}
+      <a href="{{ product.url }}" class="mens-card__quick" aria-label="Quick view {{ product.title | escape }}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"/></svg>
+      </a>
+      {%- if show_quick_add -%}
+        <a href="{{ product.url }}" class="mens-card__options">Choose Options</a>
+      {%- endif -%}
     {%- endif -%}
   </div>
 

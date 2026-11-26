@@ -6,13 +6,14 @@
     <div class="mens-tabs__row">
       <div class="mens-tabs" data-mens-tabs role="tablist">
         {%- for block in section.blocks -%}
+          {%- assign tab_col = block.settings.collection -%}
           <button type="button"
                   class="mens-tabs__btn{% if forloop.first %} is-active{% endif %}"
                   data-mens-tab-btn
                   data-key="tab-{{ block.id }}"
                   role="tab"
                   {{ block.shopify_attributes }}>
-            {{ block.settings.tab_label | default: block.settings.collection.title }}
+            {{ block.settings.tab_label | default: tab_col.title | default: 'Tab' }}
           </button>
         {%- endfor -%}
       </div>
@@ -22,19 +23,25 @@
     </div>
 
     {%- for block in section.blocks -%}
+      {%- comment -%} `block.settings.collection` is a Collection object when picked. Use it directly — Dawn pattern. {%- endcomment -%}
       {%- assign col = block.settings.collection -%}
       <div class="mens-tab-panel{% if forloop.first %} is-active{% endif %}" data-mens-tab-panel data-key="tab-{{ block.id }}">
-        <div class="mens-grid" style="--mens-cols: {{ section.settings.columns_desktop }};">
-          {%- if col.products.size > 0 -%}
+        {%- if col != blank and col.all_products_count > 0 -%}
+          <div class="mens-grid" style="--mens-cols: {{ section.settings.columns_desktop }};">
             {%- for product in col.products limit: section.settings.products_to_show -%}
               {% render 'mens-product-card', product: product, show_quick_add: true, show_vendor: true %}
             {%- endfor -%}
-          {%- else -%}
+          </div>
+          {%- if col.all_products_count > section.settings.products_to_show -%}
+            <p class="mens-tabs__viewall">
+              <a href="{{ col.url }}" class="mens-btn mens-btn--ghost">View all {{ col.all_products_count }} in {{ col.title }}</a>
+            </p>
+          {%- endif -%}
+        {%- else -%}
+          <div class="mens-grid" style="--mens-cols: {{ section.settings.columns_desktop }};">
             {%- for i in (1..section.settings.products_to_show) -%}
               <article class="mens-card">
-                <div class="mens-card__media">
-                  {{ 'product-apparel-' | append: forloop.index0 | modulo: 4 | plus: 1 | placeholder_svg_tag: 'placeholder-svg mens-card__img mens-card__img--primary' }}
-                </div>
+                <div class="mens-card__media">{{ 'product-apparel-1' | placeholder_svg_tag: 'placeholder-svg mens-card__img mens-card__img--primary' }}</div>
                 <div class="mens-card__info">
                   <p class="mens-card__vendor">Shirts</p>
                   <h3 class="mens-card__title">Oxford Shirt</h3>
@@ -42,8 +49,15 @@
                 </div>
               </article>
             {%- endfor -%}
-          {%- endif -%}
-        </div>
+          </div>
+          <p class="mens-tabs__hint">
+            {%- if col == blank -%}
+              Pick a collection in this tab's settings to display real products.
+            {%- else -%}
+              The "{{ col.title }}" collection is empty — add products in Shopify admin → Products.
+            {%- endif -%}
+          </p>
+        {%- endif -%}
       </div>
     {%- endfor -%}
   </div>
@@ -62,7 +76,8 @@
       { "value": "3", "label": "3" }, { "value": "4", "label": "4" }, { "value": "5", "label": "5" }
     ], "default": "4" },
     { "type": "text", "id": "view_all_label", "label": "Link label", "default": "Shop All Products" },
-    { "type": "url", "id": "view_all_link", "label": "Link URL" }
+    { "type": "url", "id": "view_all_link", "label": "Link URL" },
+    { "type": "paragraph", "content": "Each tab block has its own Collection picker — assign a different collection per tab." }
   ],
   "blocks": [
     {
@@ -78,7 +93,7 @@
     {
       "name": "Mens featured tabs",
       "blocks": [
-        { "type": "tab", "settings": { "tab_label": "What's Trending" } },
+        { "type": "tab", "settings": { "tab_label": "What's hot" } },
         { "type": "tab", "settings": { "tab_label": "Best sellers" } },
         { "type": "tab", "settings": { "tab_label": "Sale" } }
       ]

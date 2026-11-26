@@ -1,6 +1,10 @@
 {{ 'mens-theme.css' | asset_url | stylesheet_tag }}
 
 {%- assign col = section.settings.collection -%}
+{%- assign has_products = false -%}
+{%- if col != blank and col.all_products_count > 0 -%}
+  {%- assign has_products = true -%}
+{%- endif -%}
 
 <section class="mens-section{% if section.settings.soft_background %} mens-section--soft{% endif %}">
   <div class="mens-wrap">
@@ -16,12 +20,14 @@
       {%- endif -%}
     </div>
 
-    <div class="mens-grid" style="--mens-cols: {{ section.settings.columns_desktop }};">
-      {%- if col.products.size > 0 -%}
+    {%- if has_products -%}
+      <div class="mens-grid" style="--mens-cols: {{ section.settings.columns_desktop }};">
         {%- for product in col.products limit: section.settings.products_to_show -%}
           {% render 'mens-product-card', product: product, show_quick_add: true, show_vendor: true %}
         {%- endfor -%}
-      {%- else -%}
+      </div>
+    {%- else -%}
+      <div class="mens-grid" style="--mens-cols: {{ section.settings.columns_desktop }};">
         {%- for i in (1..section.settings.products_to_show) -%}
           <article class="mens-card">
             <div class="mens-card__media">{{ 'product-apparel-1' | placeholder_svg_tag: 'placeholder-svg mens-card__img mens-card__img--primary' }}</div>
@@ -32,8 +38,15 @@
             </div>
           </article>
         {%- endfor -%}
-      {%- endif -%}
-    </div>
+      </div>
+      <p class="mens-tabs__hint">
+        {%- if col == blank -%}
+          Pick a collection in the section settings to display real products.
+        {%- else -%}
+          The "{{ col.title }}" collection is empty — add products in Shopify admin → Products or switch the collection.
+        {%- endif -%}
+      </p>
+    {%- endif -%}
   </div>
 </section>
 
