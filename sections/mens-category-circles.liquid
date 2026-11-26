@@ -1,0 +1,82 @@
+{{ 'mens-theme.css' | asset_url | stylesheet_tag }}
+
+<section class="mens-section mens-section--tight">
+  <div class="mens-wrap">
+    {%- if section.settings.heading != blank -%}
+      <div class="mens-head">
+        <div>
+          {%- if section.settings.eyebrow != blank -%}
+            <p class="mens-head__eyebrow">{{ section.settings.eyebrow }}</p>
+          {%- endif -%}
+          <h2 class="mens-head__title">{{ section.settings.heading }}</h2>
+        </div>
+      </div>
+    {%- endif -%}
+
+    <div class="mens-circles">
+      {%- for block in section.blocks -%}
+        {%- assign col = block.settings.collection -%}
+        {%- assign href = block.settings.link | default: col.url | default: '#' -%}
+        <a href="{{ href }}" class="mens-circle" {{ block.shopify_attributes }}>
+          {%- if block.settings.badge_text != blank -%}
+            <span class="mens-circle__img mens-circle__img--accent" style="background: {{ block.settings.badge_color }};">{{ block.settings.badge_text }}</span>
+          {%- elsif block.settings.image != blank -%}
+            <span class="mens-circle__img">{{ block.settings.image | image_url: width: 220 | image_tag: loading: 'lazy', widths: '140,220', sizes: '112px', alt: block.settings.label | escape }}</span>
+          {%- elsif col.featured_image != blank -%}
+            <span class="mens-circle__img">{{ col.featured_image | image_url: width: 220 | image_tag: loading: 'lazy', widths: '140,220', sizes: '112px', alt: col.title | escape }}</span>
+          {%- else -%}
+            <span class="mens-circle__img">{{ 'collection-1' | placeholder_svg_tag: 'placeholder-svg' }}</span>
+          {%- endif -%}
+          <span class="mens-circle__label">{{ block.settings.label | default: col.title | default: 'Category' }}</span>
+        </a>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Mens category circles",
+  "tag": "section",
+  "class": "mens-category-circles",
+  "max_blocks": 24,
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Shop by category" }
+  ],
+  "blocks": [
+    {
+      "type": "circle",
+      "name": "Circle",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "collection", "id": "collection", "label": "Linked collection" },
+        { "type": "url", "id": "link", "label": "Override link" },
+        { "type": "text", "id": "label", "label": "Label", "default": "Shirts" },
+        { "type": "header", "content": "Sale tile (optional)" },
+        { "type": "text", "id": "badge_text", "label": "Badge text (leaves image blank)" },
+        { "type": "color", "id": "badge_color", "label": "Badge colour", "default": "#e03a2f" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Mens category circles",
+      "blocks": [
+        { "type": "circle", "settings": { "label": "Sale", "badge_text": "Sale" } },
+        { "type": "circle", "settings": { "label": "Shirts" } },
+        { "type": "circle", "settings": { "label": "T-Shirts" } },
+        { "type": "circle", "settings": { "label": "Jackets" } },
+        { "type": "circle", "settings": { "label": "Trousers" } },
+        { "type": "circle", "settings": { "label": "Shoes" } },
+        { "type": "circle", "settings": { "label": "Hoodies" } },
+        { "type": "circle", "settings": { "label": "Watches" } },
+        { "type": "circle", "settings": { "label": "Bags" } },
+        { "type": "circle", "settings": { "label": "Belts" } },
+        { "type": "circle", "settings": { "label": "Caps" } },
+        { "type": "circle", "settings": { "label": "Accessories" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

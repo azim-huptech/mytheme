@@ -1,0 +1,69 @@
+{{ 'mens-theme.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'mens-theme.js' | asset_url }}" defer></script>
+
+{%- assign nav = linklists[section.settings.menu] -%}
+
+<header class="mens-header" data-mens-header>
+  <div class="mens-wrap">
+    <div class="mens-header__row">
+      <a href="{{ routes.root_url }}" class="mens-header__logo">
+        {%- if section.settings.logo != blank -%}
+          {{ section.settings.logo | image_url: width: 240 | image_tag: loading: 'eager', widths: '120,240', alt: shop.name }}
+        {%- else -%}
+          {{ section.settings.brand_name | default: shop.name }}
+        {%- endif -%}
+      </a>
+
+      <nav class="mens-header__nav" data-mens-nav aria-label="Main">
+        {%- for link in nav.links -%}
+          <a href="{{ link.url }}">{{ link.title }}</a>
+        {%- endfor -%}
+        {%- if nav.links.size == 0 -%}
+          <a href="{{ routes.root_url }}">Home</a>
+          <a href="{{ routes.collections_url }}">Shop</a>
+          <a href="{{ routes.collections_url }}">Collections</a>
+          <a href="{{ routes.search_url }}">Search</a>
+          <a href="/pages/contact">Contact</a>
+        {%- endif -%}
+      </nav>
+
+      <div class="mens-header__actions">
+        <button type="button" class="mens-header__icon" data-mens-search-btn aria-label="Search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="22" height="22"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        </button>
+        <a href="{{ routes.account_url }}" class="mens-header__icon" aria-label="Account">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="22" height="22"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg>
+        </a>
+        <a href="{{ routes.cart_url }}" class="mens-header__icon" aria-label="Cart">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="22" height="22"><path d="M6 7h12l-1.5 11.2a2 2 0 01-2 1.8h-5a2 2 0 01-2-1.8L6 7z"/><path d="M9 7V5a3 3 0 016 0v2"/></svg>
+          {%- if cart.item_count > 0 -%}
+            <span class="mens-header__count">{{ cart.item_count }}</span>
+          {%- endif -%}
+        </a>
+        <button type="button" class="mens-header__icon mens-header__burger" data-mens-burger aria-label="Menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="mens-header__search" data-mens-search>
+      <form action="{{ routes.search_url }}" method="get" role="search">
+        <input type="text" name="q" placeholder="Search products…" aria-label="Search">
+        <button type="submit" class="mens-btn mens-btn--primary">Search</button>
+      </form>
+    </div>
+  </div>
+</header>
+
+{% schema %}
+{
+  "name": "Mens header",
+  "tag": "section",
+  "class": "mens-header-section",
+  "settings": [
+    { "type": "image_picker", "id": "logo", "label": "Logo image" },
+    { "type": "text", "id": "brand_name", "label": "Brand name (if no logo)", "default": "YOURSTORE" },
+    { "type": "link_list", "id": "menu", "label": "Navigation menu", "default": "main-menu" }
+  ],
+  "presets": [ { "name": "Mens header" } ]
+}
+{% endschema %}

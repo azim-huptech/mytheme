@@ -1,0 +1,95 @@
+{% doc %}
+  Renders a product card for the mens store sections.
+
+  @param {object} product - The product object to render.
+  @param {boolean} [show_quick_add] - Show the "Choose Options" hover action.
+  @param {boolean} [show_vendor] - Show the vendor / product type label.
+  @param {string} [badge_sold_out_text] - Optional override text for the "sold out" badge.
+
+  @example
+  {% render 'mens-product-card', product: product, show_quick_add: true, show_vendor: true %}
+{% enddoc %}
+
+{%- liquid
+  assign on_sale = false
+  if product.compare_at_price > product.price
+    assign on_sale = true
+    assign discount_pct = product.compare_at_price | minus: product.price | times: 100 | divided_by: product.compare_at_price
+  endif
+  assign is_new = false
+  assign days_since_publish = 'now' | date: '%s' | minus: product.published_at | date: '%s' | divided_by: 86400
+  if days_since_publish < 30
+    assign is_new = true
+  endif
+  assign selling_fast = false
+  if product.inventory_management and product.selected_or_first_available_variant.inventory_quantity > 0 and product.selected_or_first_available_variant.inventory_quantity < 6
+    assign selling_fast = true
+  endif
+  assign primary = product.featured_image
+  assign secondary = product.images[1] | default: primary
+-%}
+
+<article class="mens-card" data-mens-card>
+  <div class="mens-card__media">
+    <a href="{{ product.url }}" aria-label="{{ product.title | escape }}">
+      {%- if primary != blank -%}
+        {{ primary | image_url: width: 600 | image_tag:
+          loading: 'lazy',
+          widths: '220,320,480,640',
+          sizes: '(min-width: 990px) 25vw, 50vw',
+          class: 'mens-card__img mens-card__img--primary',
+          alt: product.title | escape }}
+        {%- if secondary != blank and secondary != primary -%}
+          {{ secondary | image_url: width: 600 | image_tag:
+            loading: 'lazy',
+            widths: '220,320,480,640',
+            sizes: '(min-width: 990px) 25vw, 50vw',
+            class: 'mens-card__img mens-card__img--secondary',
+            alt: product.title | escape }}
+        {%- endif -%}
+      {%- else -%}
+        {{ 'product-apparel-1' | placeholder_svg_tag: 'placeholder-svg mens-card__img mens-card__img--primary' }}
+      {%- endif -%}
+    </a>
+
+    <div class="mens-card__badges">
+      {%- if on_sale -%}
+        <span class="mens-badge mens-badge--sale">-{{ discount_pct }}%</span>
+      {%- endif -%}
+      {%- if is_new -%}
+        <span class="mens-badge mens-badge--new">New</span>
+      {%- endif -%}
+      {%- if selling_fast -%}
+        <span class="mens-badge mens-badge--fast">Selling fast!</span>
+      {%- endif -%}
+      {%- if product.available == false -%}
+        <span class="mens-badge mens-badge--fast">{{ badge_sold_out_text | default: 'Sold out' }}</span>
+      {%- endif -%}
+    </div>
+
+    <a href="{{ product.url }}" class="mens-card__quick" aria-label="Quick view {{ product.title | escape }}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"/></svg>
+    </a>
+
+    {%- if show_quick_add -%}
+      <a href="{{ product.url }}" class="mens-card__options">Choose Options</a>
+    {%- endif -%}
+  </div>
+
+  <div class="mens-card__info">
+    {%- if show_vendor and product.type != blank -%}
+      <p class="mens-card__vendor">{{ product.type }}</p>
+    {%- elsif show_vendor -%}
+      <p class="mens-card__vendor">{{ product.vendor }}</p>
+    {%- endif -%}
+    <h3 class="mens-card__title"><a href="{{ product.url }}">{{ product.title }}</a></h3>
+    <div class="mens-card__price">
+      {%- if on_sale -%}
+        <ins>{{ product.price | money }}</ins>
+        <del>{{ product.compare_at_price | money }}</del>
+      {%- else -%}
+        <span>{{ product.price | money }}</span>
+      {%- endif -%}
+    </div>
+  </div>
+</article>

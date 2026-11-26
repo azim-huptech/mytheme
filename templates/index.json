@@ -1,0 +1,143 @@
+{
+  "sections": {
+    "hero": {
+      "type": "mens-hero-slider",
+      "blocks": {
+        "s1": {
+          "type": "slide",
+          "settings": {
+            "eyebrow": "Autumn drop",
+            "heading": "Dress sharp, live bold.",
+            "text": "Premium essentials, tailored for the modern man.",
+            "button_label": "Shop the look",
+            "button_link": "shopify://collections/all",
+            "chip_label": "Oxford Shirt"
+          }
+        },
+        "s2": {
+          "type": "slide",
+          "settings": {
+            "eyebrow": "Best sellers",
+            "heading": "Built to layer, made to last.",
+            "text": "From the hanger to the street — our most loved pieces.",
+            "button_label": "Browse best sellers",
+            "button_link": "shopify://collections/all",
+            "chip_label": "Chore Jacket"
+          }
+        }
+      },
+      "block_order": ["s1", "s2"],
+      "settings": { "autoplay": true, "interval": 6, "text_color": "#ffffff" }
+    },
+
+    "trust": {
+      "type": "mens-trust-bar",
+      "blocks": {
+        "t1": { "type": "trust", "settings": { "icon": "truck",   "heading": "Free shipping",     "text": "On all orders over $75" } },
+        "t2": { "type": "trust", "settings": { "icon": "return",  "heading": "30-day returns",    "text": "Free, hassle-free returns" } },
+        "t3": { "type": "trust", "settings": { "icon": "secure",  "heading": "Secure checkout",   "text": "SSL encrypted payments" } },
+        "t4": { "type": "trust", "settings": { "icon": "support", "heading": "Dedicated support", "text": "Chat with us 7 days a week" } }
+      },
+      "block_order": ["t1","t2","t3","t4"]
+    },
+
+    "circles": {
+      "type": "mens-category-circles",
+      "blocks": {
+        "c1":  { "type": "circle", "settings": { "label": "Sale",        "badge_text": "Sale", "badge_color": "#e03a2f" } },
+        "c2":  { "type": "circle", "settings": { "label": "Shirts" } },
+        "c3":  { "type": "circle", "settings": { "label": "T-Shirts" } },
+        "c4":  { "type": "circle", "settings": { "label": "Jackets" } },
+        "c5":  { "type": "circle", "settings": { "label": "Trousers" } },
+        "c6":  { "type": "circle", "settings": { "label": "Shoes" } },
+        "c7":  { "type": "circle", "settings": { "label": "Hoodies" } },
+        "c8":  { "type": "circle", "settings": { "label": "Watches" } },
+        "c9":  { "type": "circle", "settings": { "label": "Bags" } },
+        "c10": { "type": "circle", "settings": { "label": "Belts" } },
+        "c11": { "type": "circle", "settings": { "label": "Caps" } },
+        "c12": { "type": "circle", "settings": { "label": "Accessories" } }
+      },
+      "block_order": ["c1","c2","c3","c4","c5","c6","c7","c8","c9","c10","c11","c12"],
+      "settings": { "heading": "Shop by category", "eyebrow": "Browse" }
+    },
+
+    "featured_tabs": {
+      "type": "mens-featured-tabs",
+      "blocks": {
+        "tab1": { "type": "tab", "settings": { "tab_label": "What's hot" } },
+        "tab2": { "type": "tab", "settings": { "tab_label": "Best sellers" } },
+        "tab3": { "type": "tab", "settings": { "tab_label": "Sale" } }
+      },
+      "block_order": ["tab1","tab2","tab3"],
+      "settings": {
+        "products_to_show": 8,
+        "columns_desktop": "4",
+        "view_all_label": "Shop All Products",
+        "view_all_link": "shopify://collections/all",
+        "background": "#ffffff"
+      }
+    },
+
+    "promos": {
+      "type": "mens-promo-banners",
+      "blocks": {
+        "p1": { "type": "banner", "settings": { "heading": "Autumn Shirts", "text": "Elevate your wardrobe with 40% off hand-picked styles.", "button_label": "Shop Now", "button_link": "shopify://collections/all", "tone": "sand", "background_color": "#ece2cf", "save_amount": "40%", "save_color": "#f4e872" } },
+        "p2": { "type": "banner", "settings": { "heading": "Chore Jackets", "text": "Timeless layering pieces, now 30% off.",             "button_label": "Shop Now", "button_link": "shopify://collections/all", "tone": "mint", "background_color": "#d5ecd8", "save_amount": "30%", "save_color": "#e03a2f" } }
+      },
+      "block_order": ["p1","p2"]
+    },
+
+    "showcase": {
+      "type": "mens-collection-showcase",
+      "blocks": {
+        "cc1": { "type": "card", "settings": { "heading": "Shirts" } },
+        "cc2": { "type": "card", "settings": { "heading": "Jackets" } },
+        "cc3": { "type": "card", "settings": { "heading": "Trousers" } },
+        "cc4": { "type": "card", "settings": { "heading": "Shoes" } },
+        "cc5": { "type": "card", "settings": { "heading": "Accessories" } }
+      },
+      "block_order": ["cc1","cc2","cc3","cc4","cc5"],
+      "settings": {
+        "eyebrow": "Shop the edit",
+        "heading": "Men's essentials",
+        "description": "Thoughtfully crafted pieces that last — built for your everyday rotation."
+      }
+    },
+
+    "best_sellers": {
+      "type": "mens-best-sellers",
+      "settings": {
+        "eyebrow": "Most loved",
+        "heading": "Best sellers",
+        "products_to_show": 8,
+        "columns_desktop": "4",
+        "view_all_label": "Shop all",
+        "view_all_link": "shopify://collections/all",
+        "soft_background": true
+      }
+    },
+
+    "contact": {
+      "type": "mens-contact",
+      "settings": {
+        "eyebrow": "Contact",
+        "heading": "We're here to help.",
+        "subheading": "Questions about sizing, orders or anything else — drop us a line and we'll reply within one business day.",
+        "address": "221B Baker Street, London",
+        "phone": "+1 (555) 123-4567",
+        "email": "support@yourstore.com",
+        "hours": "Mon – Sat, 10am – 7pm"
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "trust",
+    "circles",
+    "featured_tabs",
+    "promos",
+    "showcase",
+    "best_sellers",
+    "contact"
+  ]
+}

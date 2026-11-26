@@ -1,0 +1,88 @@
+{{ 'mens-theme.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'mens-theme.js' | asset_url }}" defer></script>
+
+<section class="mens-section" style="background: {{ section.settings.background }};">
+  <div class="mens-wrap">
+    <div class="mens-tabs__row">
+      <div class="mens-tabs" data-mens-tabs role="tablist">
+        {%- for block in section.blocks -%}
+          <button type="button"
+                  class="mens-tabs__btn{% if forloop.first %} is-active{% endif %}"
+                  data-mens-tab-btn
+                  data-key="tab-{{ block.id }}"
+                  role="tab"
+                  {{ block.shopify_attributes }}>
+            {{ block.settings.tab_label | default: block.settings.collection.title }}
+          </button>
+        {%- endfor -%}
+      </div>
+      {%- if section.settings.view_all_label != blank -%}
+        <a href="{{ section.settings.view_all_link }}" class="mens-head__link">{{ section.settings.view_all_label }} <span aria-hidden="true">›</span></a>
+      {%- endif -%}
+    </div>
+
+    {%- for block in section.blocks -%}
+      {%- assign col = block.settings.collection -%}
+      <div class="mens-tab-panel{% if forloop.first %} is-active{% endif %}" data-mens-tab-panel data-key="tab-{{ block.id }}">
+        <div class="mens-grid" style="--mens-cols: {{ section.settings.columns_desktop }};">
+          {%- if col.products.size > 0 -%}
+            {%- for product in col.products limit: section.settings.products_to_show -%}
+              {% render 'mens-product-card', product: product, show_quick_add: true, show_vendor: true %}
+            {%- endfor -%}
+          {%- else -%}
+            {%- for i in (1..section.settings.products_to_show) -%}
+              <article class="mens-card">
+                <div class="mens-card__media">
+                  {{ 'product-apparel-' | append: forloop.index0 | modulo: 4 | plus: 1 | placeholder_svg_tag: 'placeholder-svg mens-card__img mens-card__img--primary' }}
+                </div>
+                <div class="mens-card__info">
+                  <p class="mens-card__vendor">Shirts</p>
+                  <h3 class="mens-card__title">Oxford Shirt</h3>
+                  <div class="mens-card__price"><span>$79.00</span></div>
+                </div>
+              </article>
+            {%- endfor -%}
+          {%- endif -%}
+        </div>
+      </div>
+    {%- endfor -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Mens featured tabs",
+  "tag": "section",
+  "class": "mens-featured-tabs",
+  "max_blocks": 5,
+  "settings": [
+    { "type": "color", "id": "background", "label": "Background", "default": "#ffffff" },
+    { "type": "range", "id": "products_to_show", "label": "Products per tab", "min": 4, "max": 12, "step": 1, "default": 8 },
+    { "type": "select", "id": "columns_desktop", "label": "Columns on desktop", "options": [
+      { "value": "3", "label": "3" }, { "value": "4", "label": "4" }, { "value": "5", "label": "5" }
+    ], "default": "4" },
+    { "type": "text", "id": "view_all_label", "label": "Link label", "default": "Shop All Products" },
+    { "type": "url", "id": "view_all_link", "label": "Link URL" }
+  ],
+  "blocks": [
+    {
+      "type": "tab",
+      "name": "Tab",
+      "settings": [
+        { "type": "text", "id": "tab_label", "label": "Tab label", "default": "What's hot" },
+        { "type": "collection", "id": "collection", "label": "Collection" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Mens featured tabs",
+      "blocks": [
+        { "type": "tab", "settings": { "tab_label": "What's Trending" } },
+        { "type": "tab", "settings": { "tab_label": "Best sellers" } },
+        { "type": "tab", "settings": { "tab_label": "Sale" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

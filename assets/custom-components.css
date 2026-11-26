@@ -1,0 +1,60 @@
+.custom-hero {
+  padding: 80px 0;
+  background-color: aliceblue;
+}
+
+.custom-hero__content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 60px;
+  background-color: aliceblue;
+}
+
+.custom-hero__eyebrow {
+  margin-bottom: 16px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.custom-hero__heading {
+  margin: 0 0 24px;
+  font-size: clamp(42px, 5vw, 76px);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+}
+
+.custom-hero__description {
+  max-width: 520px;
+  margin-bottom: 32px;
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+.custom-hero__media {
+  overflow: hidden;
+  border-radius: 24px;
+}
+
+.custom-hero__media img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+@media screen and (max-width: 749px) {
+  .custom-hero {
+    padding: 40px 0;
+  }
+
+  .custom-hero__content {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .custom-hero__heading {
+    font-size: 48px;
+  }
+}
