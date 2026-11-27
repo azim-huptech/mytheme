@@ -1,0 +1,118 @@
+{% doc %}
+  Equal-height product card for collection/search grids, with colour swatch thumbnails.
+
+  @param {object} product - The product to render.
+  @param {boolean} [show_swatches] - Show colour swatch thumbnails (default true).
+  @param {boolean} [show_rating] - Show rating from the reviews.rating metafield when present.
+
+  @example
+  {% render 'mens-grid-card', product: product, show_swatches: true, show_rating: true %}
+{% enddoc %}
+
+{%- liquid
+  assign on_sale = false
+  if product.compare_at_price > product.price
+    assign on_sale = true
+    assign discount_pct = product.compare_at_price | minus: product.price | times: 100 | divided_by: product.compare_at_price
+  endif
+
+  assign is_new = false
+  if product.published_at != blank
+    assign now_s = 'now' | date: '%s' | plus: 0
+    assign pub_s = product.published_at | date: '%s' | plus: 0
+    assign age_days = now_s | minus: pub_s | divided_by: 86400
+    if age_days < 30
+      assign is_new = true
+    endif
+  endif
+
+  assign color_option = nil
+  for option in product.options_with_values
+    assign oname = option.name | downcase
+    if oname == 'color' or oname == 'colour' or oname == 'colors' or oname == 'colours'
+      assign color_option = option
+      break
+    endif
+  endfor
+
+  assign swatches_on = true
+  if show_swatches == false
+    assign swatches_on = false
+  endif
+-%}
+
+<article class="mens-gcard{% unless product.available %} mens-gcard--sold-out{% endunless %}" data-mens-gcard>
+  <a href="{{ product.url }}" class="mens-gcard__media" tabindex="-1" aria-hidden="true">
+    {%- if product.featured_media -%}
+      {{ product.featured_media | image_url: width: 800 | image_tag:
+        loading: 'lazy',
+        widths: '300,400,500,600,800',
+        sizes: '(min-width: 1200px) 30vw, (min-width: 750px) 40vw, 50vw',
+        alt: product.featured_media.alt | default: product.title | escape }}
+    {%- else -%}
+      {{ 'product-apparel-1' | placeholder_svg_tag: 'placeholder-svg' }}
+    {%- endif -%}
+  </a>
+
+  <div class="mens-gcard__badges">
+    {%- if product.available == false -%}
+      <span class="mens-gcard__badge mens-gcard__badge--soldout">Sold out</span>
+    {%- else -%}
+      {%- if on_sale -%}<span class="mens-gcard__badge mens-gcard__badge--sale">{{ discount_pct }}% Off</span>{%- endif -%}
+      {%- if is_new -%}<span class="mens-gcard__badge mens-gcard__badge--new">New</span>{%- endif -%}
+    {%- endif -%}
+  </div>
+
+  <div class="mens-gcard__body">
+    {%- if swatches_on and color_option and color_option.values.size > 1 -%}
+      <div class="mens-gcard__swatches">
+        {%- for value in color_option.values limit: 4 -%}
+          {%- assign v = value.variant -%}
+          {%- assign v_img = v.featured_image -%}
+          <a href="{{ v.url | default: product.url }}"
+             class="mens-gcard__sw{% if forloop.first %} is-current{% endif %}"
+             title="{{ value | escape }}"
+             aria-label="{{ product.title | escape }} – {{ value | escape }}"
+             {% if v_img %}data-swap="{{ v_img | image_url: width: 800 }}"{% endif %}>
+            {%- if v_img -%}
+              {{ v_img | image_url: width: 120 | image_tag: loading: 'lazy', alt: '' }}
+            {%- elsif value.swatch.image -%}
+              {{ value.swatch.image | image_url: width: 120 | image_tag: loading: 'lazy', alt: '' }}
+            {%- elsif value.swatch.color -%}
+              <span style="background: {{ value.swatch.color }};"></span>
+            {%- else -%}
+              <span style="background: {{ value | handle | replace: '-', '' }};"></span>
+            {%- endif -%}
+          </a>
+        {%- endfor -%}
+        {%- if color_option.values.size > 4 -%}
+          <span class="mens-gcard__more">+{{ color_option.values.size | minus: 4 }}</span>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <h3 class="mens-gcard__title"><a href="{{ product.url }}">{{ product.title | escape }}</a></h3>
+
+    {%- if show_rating and product.metafields.reviews.rating.value != blank -%}
+      {%- assign r = product.metafields.reviews.rating.value -%}
+      {%- assign r_val = r.rating | round: 1 -%}
+      <div class="mens-gcard__rating">
+        <span class="mens-gcard__stars" aria-hidden="true">
+          {%- assign full = r.rating | round -%}
+          {%- for i in (1..5) -%}{% if i <= full %}★{% else %}☆{% endif %}{%- endfor -%}
+        </span>
+        <b>{{ r_val }}</b>
+        {%- if product.metafields.reviews.rating_count.value -%}<span>({{ product.metafields.reviews.rating_count.value }})</span>{%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="mens-gcard__price">
+      {%- if product.price_varies -%}<span style="font-weight:400;font-size:13px;color:var(--mens-muted);">From</span>{%- endif -%}
+      <span>{{ product.price | money }}</span>
+      {%- if on_sale -%}
+        <s>{{ product.compare_at_price | money }}</s>
+        <span class="mens-gcard__off">{{ discount_pct }}% off</span>
+      {%- endif -%}
+    </div>
+  </div>
+</article>

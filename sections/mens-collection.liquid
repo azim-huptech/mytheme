@@ -1,0 +1,317 @@
+{{ 'mens-theme.css' | asset_url | stylesheet_tag }}
+{{ 'mens-pages.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'mens-pages.js' | asset_url }}" defer></script>
+
+{%- liquid
+  assign sort_by = collection.sort_by | default: collection.default_sort_by
+  assign stock_value = nil
+  assign active_total = 0
+  for filter in collection.filters
+    if filter.type == 'price_range'
+      if filter.min_value.value != nil or filter.max_value.value != nil
+        assign active_total = active_total | plus: 1
+      endif
+    else
+      if filter.param_name == 'filter.v.availability'
+        for value in filter.values
+          if value.value == '1'
+            assign stock_value = value
+          endif
+        endfor
+      else
+        assign active_total = active_total | plus: filter.active_values.size
+      endif
+    endif
+  endfor
+  assign ratio = section.settings.image_ratio
+  assign clear_url = collection.url | append: '?sort_by=' | append: sort_by
+-%}
+
+{%- capture chevron -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>{%- endcapture -%}
+{%- capture tick -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>{%- endcapture -%}
+{%- capture xicon -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>{%- endcapture -%}
+
+<div class="mens-page mens-coll" data-mens-collection>
+  <div class="mens-wrap">
+    {%- paginate collection.products by section.settings.per_page -%}
+
+    <div class="mens-coll__head">
+      {%- if section.settings.show_breadcrumb -%}
+        <nav class="mens-crumbs" aria-label="Breadcrumb">
+          <a href="{{ routes.root_url }}">Home</a>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
+          <a href="{{ routes.collections_url }}">Collections</a>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
+          <span aria-current="page">{{ collection.title }}</span>
+        </nav>
+      {%- endif -%}
+      <h1 class="mens-page__title">{{ collection.title }}</h1>
+      {%- if section.settings.show_description and collection.description != blank -%}
+        <div class="mens-page__sub">{{ collection.description }}</div>
+      {%- endif -%}
+    </div>
+
+    {%- comment -%} ===== Top toolbar (Neemans-style) ===== {%- endcomment -%}
+    <div class="mens-toolbar">
+      <div class="mens-toolbar__count">
+        {{ collection.products_count }} {{ section.settings.count_label }}
+      </div>
+
+      {%- if section.settings.enable_filtering and collection.filters.size > 0 -%}
+        <div class="mens-toolbar__pills">
+          {%- for filter in collection.filters -%}
+            {%- if filter.param_name == 'filter.v.availability' -%}{%- continue -%}{%- endif -%}
+            {%- assign group_id = 'MensFilter-' | append: section.id | append: '-' | append: forloop.index -%}
+            {%- if filter.type == 'price_range' -%}
+              <button type="button" class="mens-pill-btn" data-mens-filter-open data-target="{{ group_id }}">
+                {{ filter.label }}
+                {%- if filter.min_value.value != nil or filter.max_value.value != nil -%}<span class="mens-pill__badge">1</span>{%- endif -%}
+                {{ chevron }}
+              </button>
+            {%- else -%}
+              <details class="mens-pill" data-mens-pill>
+                <summary>
+                  {{ filter.label }}
+                  {%- if filter.active_values.size > 0 -%}<span class="mens-pill__badge">{{ filter.active_values.size }}</span>{%- endif -%}
+                  {{ chevron }}
+                </summary>
+                <div class="mens-pill__panel">
+                  {%- for value in filter.values -%}
+                    {%- if value.active -%}
+                      <a class="mens-pill__opt is-active" href="{{ value.url_to_remove }}">
+                        <span class="mens-check">{{ tick }}</span>{{ value.label }}<small>{{ value.count }}</small>
+                      </a>
+                    {%- else -%}
+                      <a class="mens-pill__opt{% if value.count == 0 %} is-disabled{% endif %}" href="{{ value.url_to_add }}">
+                        <span class="mens-check">{{ tick }}</span>{{ value.label }}<small>{{ value.count }}</small>
+                      </a>
+                    {%- endif -%}
+                  {%- endfor -%}
+                </div>
+              </details>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+
+      <div class="mens-toolbar__right">
+        {%- if section.settings.enable_filtering and stock_value -%}
+          <label class="mens-toggle">
+            <input type="checkbox" form="MensFilterForm-{{ section.id }}" name="{{ stock_value.param_name }}" value="{{ stock_value.value }}" data-mens-autosubmit {% if stock_value.active %}checked{% endif %}>
+            <span class="mens-toggle__track"></span>
+            In stock only
+          </label>
+        {%- endif -%}
+
+        {%- if section.settings.enable_sorting -%}
+          <label class="mens-sort">
+            Sort by:
+            <select name="sort_by" form="MensFilterForm-{{ section.id }}" data-mens-autosubmit aria-label="Sort products">
+              {%- for option in collection.sort_options -%}
+                <option value="{{ option.value | escape }}"{% if option.value == sort_by %} selected{% endif %}>{{ option.name | escape }}</option>
+              {%- endfor -%}
+            </select>
+          </label>
+        {%- endif -%}
+
+        {%- if section.settings.enable_filtering and collection.filters.size > 0 -%}
+          <button type="button" class="mens-pill-btn mens-filter-open" data-mens-filter-open>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
+            Filters{% if active_total > 0 %} <span class="mens-pill__badge">{{ active_total }}</span>{% endif %}
+          </button>
+        {%- endif -%}
+      </div>
+    </div>
+
+    <div class="mens-coll__layout"{% unless section.settings.enable_filtering and collection.filters.size > 0 %} style="grid-template-columns: 1fr;"{% endunless %}>
+
+      {%- comment -%} ===== Sidebar filters ===== {%- endcomment -%}
+      {%- if section.settings.enable_filtering and collection.filters.size > 0 -%}
+        <form id="MensFilterForm-{{ section.id }}" class="mens-filters" action="{{ collection.url }}" method="get" data-mens-filter-form data-mens-filter-panel aria-label="Filters">
+          <div class="mens-filters__head">
+            <h2>Filters</h2>
+            <div style="display:flex;align-items:center;gap:12px;">
+              {%- if active_total > 0 -%}<a class="mens-filters__clear" href="{{ clear_url }}">Clear all</a>{%- endif -%}
+              <button type="button" class="mens-filters__close" data-mens-filter-close aria-label="Close filters">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg>
+              </button>
+            </div>
+          </div>
+
+          {%- if active_total > 0 -%}
+            <div class="mens-filters__chips">
+              {%- for filter in collection.filters -%}
+                {%- if filter.param_name == 'filter.v.availability' -%}{%- continue -%}{%- endif -%}
+                {%- if filter.type == 'price_range' -%}
+                  {%- if filter.min_value.value != nil or filter.max_value.value != nil -%}
+                    <a class="mens-chip" href="{{ filter.url_to_remove }}">
+                      {{ filter.min_value.value | default: 0 | money }} – {{ filter.max_value.value | default: filter.range_max | money }} {{ xicon }}
+                    </a>
+                  {%- endif -%}
+                {%- else -%}
+                  {%- for value in filter.active_values -%}
+                    <a class="mens-chip" href="{{ value.url_to_remove }}">{{ value.label }} {{ xicon }}</a>
+                  {%- endfor -%}
+                {%- endif -%}
+              {%- endfor -%}
+            </div>
+          {%- endif -%}
+
+          {%- for filter in collection.filters -%}
+            {%- if filter.param_name == 'filter.v.availability' -%}{%- continue -%}{%- endif -%}
+            {%- assign group_id = 'MensFilter-' | append: section.id | append: '-' | append: forloop.index -%}
+            {%- assign is_open = false -%}
+            {%- if forloop.index <= section.settings.open_groups -%}{%- assign is_open = true -%}{%- endif -%}
+            {%- if filter.active_values.size > 0 -%}{%- assign is_open = true -%}{%- endif -%}
+            {%- if filter.type == 'price_range' -%}
+              {%- if filter.min_value.value != nil or filter.max_value.value != nil -%}{%- assign is_open = true -%}{%- endif -%}
+            {%- endif -%}
+
+            <details class="mens-filters__group" id="{{ group_id }}"{% if is_open %} open{% endif %}>
+              <summary>
+                {{ filter.label }}
+                {%- if filter.active_values.size > 0 -%}<span class="mens-pill__badge">{{ filter.active_values.size }}</span>{%- endif -%}
+                {{ chevron }}
+              </summary>
+
+              {%- case filter.type -%}
+                {%- when 'price_range' -%}
+                  {%- assign range_max = filter.range_max | money_without_currency | replace: ',', '' -%}
+                  <div class="mens-price">
+                    <div class="mens-price__row">
+                      <div class="mens-price__field">
+                        <span>{{ cart.currency.symbol }}</span>
+                        <input type="number" inputmode="decimal" data-mens-price
+                          name="{{ filter.min_value.param_name }}"
+                          {% if filter.min_value.value %}value="{{ filter.min_value.value | money_without_currency | replace: ',', '' }}"{% endif %}
+                          placeholder="0" min="0" max="{{ range_max }}" aria-label="Minimum price">
+                      </div>
+                      <span aria-hidden="true">–</span>
+                      <div class="mens-price__field">
+                        <span>{{ cart.currency.symbol }}</span>
+                        <input type="number" inputmode="decimal" data-mens-price
+                          name="{{ filter.max_value.param_name }}"
+                          {% if filter.max_value.value %}value="{{ filter.max_value.value | money_without_currency | replace: ',', '' }}"{% endif %}
+                          placeholder="{{ range_max }}" min="0" max="{{ range_max }}" aria-label="Maximum price">
+                      </div>
+                    </div>
+                    <p class="mens-price__hint">Highest price is {{ filter.range_max | money }}</p>
+                    <button type="submit" class="mens-btn mens-btn--ghost mens-btn--sm mens-btn--block">Apply price</button>
+                  </div>
+                {%- else -%}
+                  <ul class="mens-filters__list">
+                    {%- for value in filter.values -%}
+                      {%- assign disabled = false -%}
+                      {%- if value.count == 0 and value.active == false -%}{%- assign disabled = true -%}{%- endif -%}
+                      <li>
+                        <label class="mens-filters__opt{% if disabled %} is-disabled{% endif %}">
+                          <input type="checkbox" name="{{ value.param_name }}" value="{{ value.value | escape }}"{% if value.active %} checked{% endif %}{% if disabled %} disabled{% endif %}>
+                          <span class="mens-check">{{ tick }}</span>
+                          {%- if value.swatch.color -%}
+                            <span class="mens-swatch-dot" style="background-color: {{ value.swatch.color }};"></span>
+                          {%- elsif value.swatch.image -%}
+                            <span class="mens-swatch-dot" style="background-image: url({{ value.swatch.image | image_url: width: 40 }});"></span>
+                          {%- endif -%}
+                          <span>{{ value.label | escape }}</span>
+                          <small>({{ value.count }})</small>
+                        </label>
+                      </li>
+                    {%- endfor -%}
+                  </ul>
+              {%- endcase -%}
+            </details>
+          {%- endfor -%}
+
+          <noscript><button type="submit" class="mens-btn mens-btn--primary mens-btn--block" style="margin:14px 0;">Apply filters</button></noscript>
+        </form>
+        <div class="mens-filters__apply">
+          <div style="display:flex;gap:10px;">
+            <a href="{{ clear_url }}" class="mens-btn mens-btn--ghost" style="flex:1;">Clear</a>
+            <button type="submit" form="MensFilterForm-{{ section.id }}" class="mens-btn mens-btn--primary" style="flex:1;">Show results</button>
+          </div>
+        </div>
+        <div class="mens-backdrop" data-mens-backdrop></div>
+      {%- else -%}
+        <form id="MensFilterForm-{{ section.id }}" action="{{ collection.url }}" method="get" data-mens-filter-form hidden></form>
+      {%- endif -%}
+
+      {%- comment -%} ===== Product grid ===== {%- endcomment -%}
+      <div class="mens-coll__main">
+        {%- if collection.products.size > 0 -%}
+          <div class="mens-cgrid" style="--mens-cols: {{ section.settings.columns_desktop }}; --mens-ratio: {{ ratio }};">
+            {%- for product in collection.products -%}
+              {% render 'mens-grid-card', product: product, show_swatches: section.settings.show_swatches, show_rating: section.settings.show_rating %}
+            {%- endfor -%}
+          </div>
+
+          {%- if paginate.pages > 1 -%}
+            <nav class="mens-pager" aria-label="Pagination">
+              {%- if paginate.previous -%}
+                <a href="{{ paginate.previous.url }}" aria-label="Previous page">‹</a>
+              {%- endif -%}
+              {%- for part in paginate.parts -%}
+                {%- if part.is_link -%}
+                  <a href="{{ part.url }}">{{ part.title }}</a>
+                {%- elsif part.title == paginate.current_page -%}
+                  <span class="is-current" aria-current="page">{{ part.title }}</span>
+                {%- else -%}
+                  <span class="is-gap">{{ part.title }}</span>
+                {%- endif -%}
+              {%- endfor -%}
+              {%- if paginate.next -%}
+                <a href="{{ paginate.next.url }}" aria-label="Next page">›</a>
+              {%- endif -%}
+            </nav>
+          {%- endif -%}
+        {%- else -%}
+          <div class="mens-empty">
+            <span class="mens-empty__icon">
+              <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+            </span>
+            <h2>No products found</h2>
+            <p>Try removing a filter or two to see more styles.</p>
+            {%- if active_total > 0 or stock_value.active -%}
+              <a href="{{ clear_url }}" class="mens-btn mens-btn--primary">Clear all filters</a>
+            {%- else -%}
+              <a href="{{ routes.all_products_collection_url }}" class="mens-btn mens-btn--primary">Shop all products</a>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+
+    {%- endpaginate -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Mens collection grid",
+  "tag": "section",
+  "class": "mens-collection-section",
+  "enabled_on": { "templates": ["collection"] },
+  "settings": [
+    { "type": "header", "content": "Heading" },
+    { "type": "checkbox", "id": "show_breadcrumb", "label": "Show breadcrumb", "default": true },
+    { "type": "checkbox", "id": "show_description", "label": "Show collection description", "default": true },
+    { "type": "text", "id": "count_label", "label": "Product count label", "default": "styles" },
+    { "type": "header", "content": "Grid" },
+    { "type": "range", "id": "per_page", "label": "Products per page", "min": 6, "max": 48, "step": 3, "default": 24 },
+    { "type": "range", "id": "columns_desktop", "label": "Columns on desktop", "min": 2, "max": 4, "step": 1, "default": 3 },
+    {
+      "type": "select", "id": "image_ratio", "label": "Card image shape", "default": "4 / 5",
+      "options": [
+        { "value": "1 / 1", "label": "Square" },
+        { "value": "4 / 5", "label": "Portrait" },
+        { "value": "3 / 4", "label": "Tall" }
+      ]
+    },
+    { "type": "checkbox", "id": "show_swatches", "label": "Show colour swatches on cards", "default": true },
+    { "type": "checkbox", "id": "show_rating", "label": "Show product rating", "default": true, "info": "Needs a reviews app that writes the standard reviews.rating metafield." },
+    { "type": "header", "content": "Filters and sorting" },
+    { "type": "checkbox", "id": "enable_filtering", "label": "Enable filters", "default": true, "info": "Choose which filters appear (category, size, colour, price, discount…) in the Shopify Search & Discovery app." },
+    { "type": "range", "id": "open_groups", "label": "Filter groups open by default", "min": 0, "max": 6, "step": 1, "default": 2 },
+    { "type": "checkbox", "id": "enable_sorting", "label": "Enable sorting", "default": true }
+  ]
+}
+{% endschema %}

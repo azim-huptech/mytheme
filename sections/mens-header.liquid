@@ -3,7 +3,8 @@
 
 {%- assign nav = linklists[section.settings.menu] -%}
 {%- assign klass = 'mens-header' -%}
-{%- if section.settings.transparent -%}{%- assign klass = klass | append: ' mens-header--transparent' -%}{%- endif -%}
+{%- comment -%} Transparent mode only on the home page. Every other template gets the solid header so content starts below it. {%- endcomment -%}
+{%- if section.settings.transparent and template.name == 'index' -%}{%- assign klass = klass | append: ' mens-header--transparent' -%}{%- endif -%}
 {%- if section.settings.sticky -%}{%- assign klass = klass | append: ' mens-header--sticky' -%}{%- endif -%}
 
 <header class="{{ klass }}"
@@ -127,8 +128,8 @@
     { "type": "text", "id": "search_placeholder", "label": "Search placeholder", "default": "Search for shirts, jackets, shoes…" },
     { "type": "header", "content": "Layout" },
     { "type": "checkbox", "id": "sticky", "label": "Stick to top on scroll", "default": true },
-    { "type": "checkbox", "id": "transparent", "label": "Transparent over first section (home hero)", "default": true },
-    { "type": "paragraph", "content": "When transparent is on, the header floats over the hero banner and uses the Transparent text colour. Once the visitor scrolls past the hero, the header fills in with the normal colours below." },
+    { "type": "checkbox", "id": "transparent", "label": "Transparent over home page hero", "default": true },
+    { "type": "paragraph", "content": "When transparent is on, the header floats over the home page hero only (all other pages use the solid header) and uses the Transparent text colour. Once the visitor scrolls past the hero, the header fills in with the normal colours below." },
     { "type": "color", "id": "bg_color", "label": "Header background (when solid)", "default": "#ffffff" },
     { "type": "color", "id": "text_color", "label": "Header text (when solid)", "default": "#0f0f10" },
     { "type": "color", "id": "transparent_text_color", "label": "Header text (when transparent)", "default": "#ffffff" },

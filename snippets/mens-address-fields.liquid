@@ -1,0 +1,59 @@
+{% doc %}
+  Address form fields used inside a {% form 'customer_address' %} block.
+
+  @param {object} form - The customer_address form object.
+  @param {string} key - Unique suffix for element ids (e.g. 'new' or the address id).
+
+  @example
+  {% render 'mens-address-fields', form: form, key: 'new' %}
+{% enddoc %}
+
+<div class="mens-addr-form__grid">
+  <div>
+    <label class="mens-label" for="AddrFirst-{{ key }}">First name</label>
+    <input class="mens-input" id="AddrFirst-{{ key }}" type="text" name="address[first_name]" value="{{ form.first_name }}" autocomplete="given-name">
+  </div>
+  <div>
+    <label class="mens-label" for="AddrLast-{{ key }}">Last name</label>
+    <input class="mens-input" id="AddrLast-{{ key }}" type="text" name="address[last_name]" value="{{ form.last_name }}" autocomplete="family-name">
+  </div>
+  <div class="is-full">
+    <label class="mens-label" for="AddrCompany-{{ key }}">Company (optional)</label>
+    <input class="mens-input" id="AddrCompany-{{ key }}" type="text" name="address[company]" value="{{ form.company }}" autocomplete="organization">
+  </div>
+  <div class="is-full">
+    <label class="mens-label" for="AddrA1-{{ key }}">Address</label>
+    <input class="mens-input" id="AddrA1-{{ key }}" type="text" name="address[address1]" value="{{ form.address1 }}" autocomplete="address-line1">
+  </div>
+  <div class="is-full">
+    <label class="mens-label" for="AddrA2-{{ key }}">Apartment, suite, landmark (optional)</label>
+    <input class="mens-input" id="AddrA2-{{ key }}" type="text" name="address[address2]" value="{{ form.address2 }}" autocomplete="address-line2">
+  </div>
+  <div>
+    <label class="mens-label" for="AddrCity-{{ key }}">City</label>
+    <input class="mens-input" id="AddrCity-{{ key }}" type="text" name="address[city]" value="{{ form.city }}" autocomplete="address-level2">
+  </div>
+  <div>
+    <label class="mens-label" for="AddrZip-{{ key }}">PIN / Postal code</label>
+    <input class="mens-input" id="AddrZip-{{ key }}" type="text" name="address[zip]" value="{{ form.zip }}" autocomplete="postal-code">
+  </div>
+  <div>
+    <label class="mens-label" for="AddrCountry-{{ key }}">Country</label>
+    <select class="mens-input" id="AddrCountry-{{ key }}" name="address[country]" data-default="{{ form.country }}" autocomplete="country"
+      data-mens-country data-province="AddrProvince-{{ key }}" data-province-box="AddrProvinceBox-{{ key }}">
+      {{ all_country_option_tags }}
+    </select>
+  </div>
+  <div id="AddrProvinceBox-{{ key }}">
+    <label class="mens-label" for="AddrProvince-{{ key }}">State / Province</label>
+    <select class="mens-input" id="AddrProvince-{{ key }}" name="address[province]" data-default="{{ form.province }}" autocomplete="address-level1"></select>
+  </div>
+  <div class="is-full">
+    <label class="mens-label" for="AddrPhone-{{ key }}">Phone</label>
+    <input class="mens-input" id="AddrPhone-{{ key }}" type="tel" name="address[phone]" value="{{ form.phone }}" autocomplete="tel">
+  </div>
+  <label class="mens-addr-form__check is-full">
+    {{ form.set_as_default_checkbox }}
+    Set as default address
+  </label>
+</div>

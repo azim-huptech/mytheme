@@ -73,6 +73,10 @@
 }
 @keyframes mensHeaderIn { from { transform: translateY(-100%); } to { transform: translateY(0); } }
 
+/* Solid sticky header: the section wrapper must be the sticky element, otherwise it only sticks inside its own box */
+.mens-header-section:has(> .mens-header--sticky:not(.mens-header--transparent)) { position: sticky; top: 0; z-index: 50; }
+.mens-header--sticky:not(.mens-header--transparent) { position: relative; }
+
 /* First section needs headroom under the fixed header, but not under the transparent one */
 .shopify-section-header.mens-header-wrap + .shopify-section { margin-top: 0; }
 

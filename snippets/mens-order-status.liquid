@@ -1,0 +1,56 @@
+{% doc %}
+  Renders an order row (for the account dashboard) or just its status tags.
+
+  @param {object} order - The customer order.
+  @param {string} [mode] - 'row' (default) renders a linked order card; 'tags' renders only the status pills.
+
+  @example
+  {% render 'mens-order-status', order: order, mode: 'row' %}
+{% enddoc %}
+
+{%- liquid
+  assign pay_class = 'mens-status--warn'
+  case order.financial_status
+    when 'paid'
+      assign pay_class = 'mens-status--ok'
+    when 'refunded', 'voided', 'partially_refunded'
+      assign pay_class = 'mens-status--bad'
+  endcase
+
+  assign ship_class = 'mens-status--warn'
+  if order.fulfillment_status == 'fulfilled'
+    assign ship_class = 'mens-status--ok'
+  endif
+-%}
+
+{%- capture tags -%}
+  <div class="mens-order__tags">
+    {%- if order.cancelled -%}
+      <span class="mens-status mens-status--bad">Cancelled</span>
+    {%- else -%}
+      <span class="mens-status {{ pay_class }}">{{ order.financial_status_label }}</span>
+      <span class="mens-status {{ ship_class }}">{{ order.fulfillment_status_label }}</span>
+    {%- endif -%}
+  </div>
+{%- endcapture -%}
+
+{%- if mode == 'tags' -%}
+  {{ tags }}
+{%- else -%}
+  <a class="mens-order" href="{{ order.customer_url }}">
+    <div class="mens-order__thumbs" aria-hidden="true">
+      {%- for li in order.line_items limit: 3 -%}
+        <span>{% if li.image %}{{ li.image | image_url: width: 120 | image_tag: loading: 'lazy', alt: '' }}{% endif %}</span>
+      {%- endfor -%}
+    </div>
+    <div>
+      <div class="mens-order__num">Order {{ order.name }}</div>
+      <div class="mens-order__date">{{ order.created_at | date: '%d %b %Y' }} · {{ order.item_count }} {% if order.item_count == 1 %}item{% else %}items{% endif %}</div>
+      {{ tags }}
+    </div>
+    <div class="mens-order__total">
+      {{ order.total_price | money }}
+      <small>View details ›</small>
+    </div>
+  </a>
+{%- endif -%}

@@ -1,0 +1,313 @@
+{{ 'mens-theme.css' | asset_url | stylesheet_tag }}
+{{ 'mens-pages.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'mens-pages.js' | asset_url }}" defer></script>
+
+{%- capture arrow -%}<svg class="mens-tile__go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M9 7h8v8"/></svg>{%- endcapture -%}
+{%- capture chevron_r -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>{%- endcapture -%}
+
+{%- liquid
+  assign first = customer.first_name | default: customer.email | slice: 0 | upcase
+  assign last = customer.last_name | slice: 0 | upcase
+  assign initials = first | append: last
+  assign page_view = template.name
+-%}
+
+<div class="mens-page mens-acct">
+  <div class="mens-wrap">
+    <nav class="mens-crumbs" aria-label="Breadcrumb">
+      <a href="{{ routes.root_url }}">Home</a>
+      {{ chevron_r }}
+      {%- if page_view == 'account' -%}
+        <span aria-current="page">My account</span>
+      {%- else -%}
+        <a href="{{ routes.account_url }}">My account</a>
+        {{ chevron_r }}
+        <span aria-current="page">{% if page_view == 'order' %}Order {{ order.name }}{% else %}Addresses{% endif %}</span>
+      {%- endif -%}
+    </nav>
+
+    {%- case page_view -%}
+
+    {%- when 'account' -%}
+      {%- comment -%} ================= DASHBOARD ================= {%- endcomment -%}
+      <div class="mens-acct__hero">
+        <div class="mens-acct__who">
+          <div class="mens-acct__avatar" aria-hidden="true">{{ initials }}</div>
+          <div>
+            <h1>Hi, {{ customer.first_name | default: 'there' }}</h1>
+            <p>{{ customer.email }}{% if customer.created_at %} · Member since {{ customer.created_at | date: '%b %Y' }}{% endif %}</p>
+          </div>
+        </div>
+        <div class="mens-acct__stats">
+          <div class="mens-acct__stat"><strong>{{ customer.orders_count }}</strong><span>Orders</span></div>
+          <div class="mens-acct__stat"><strong>{{ customer.total_spent | money_without_trailing_zeros }}</strong><span>Total spent</span></div>
+          <div class="mens-acct__stat"><strong>{{ customer.addresses_count }}</strong><span>Addresses</span></div>
+        </div>
+      </div>
+
+      <div class="mens-acct__tiles">
+        <a class="mens-tile" href="#orders">
+          {{ arrow }}
+          <span class="mens-tile__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg></span>
+          <h3>My orders</h3>
+          <p>Track, return or buy things again</p>
+        </a>
+        <a class="mens-tile" href="#profile">
+          {{ arrow }}
+          <span class="mens-tile__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg></span>
+          <h3>Profile</h3>
+          <p>Your name, email and preferences</p>
+        </a>
+        <a class="mens-tile" href="{{ routes.account_addresses_url }}">
+          {{ arrow }}
+          <span class="mens-tile__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7-6.1-7-11a7 7 0 0114 0c0 4.9-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+          <h3>Addresses</h3>
+          <p>Manage delivery addresses</p>
+        </a>
+        {%- if customer.orders.first -%}
+          <a class="mens-tile" href="{{ customer.orders.first.order_status_url | default: customer.orders.first.customer_url }}">
+            {{ arrow }}
+            <span class="mens-tile__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7h11v10H3z"/><path d="M14 10h4l3 4v3h-7z"/><circle cx="7" cy="18" r="1.6"/><circle cx="17" cy="18" r="1.6"/></svg></span>
+            <h3>Track latest order</h3>
+            <p>Order {{ customer.orders.first.name }}</p>
+          </a>
+        {%- endif -%}
+        {%- assign help_url = section.settings.help_url | default: '/pages/contact' -%}
+        {%- if section.settings.show_help -%}
+          <a class="mens-tile" href="{{ help_url }}">
+            {{ arrow }}
+            <span class="mens-tile__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 015 .5c0 1.7-2.5 2-2.5 3.5"/><circle cx="12" cy="17" r=".6" fill="currentColor"/></svg></span>
+            <h3>Help & support</h3>
+            <p>Questions about an order? Ask us</p>
+          </a>
+        {%- endif -%}
+        <a class="mens-tile mens-tile--danger" href="{{ routes.account_logout_url }}">
+          {{ arrow }}
+          <span class="mens-tile__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg></span>
+          <h3>Log out</h3>
+          <p>Sign out of this device</p>
+        </a>
+      </div>
+
+      <div class="mens-acct__cols">
+        <div class="mens-panel" id="orders">
+          <div class="mens-panel__head">
+            <h2>Order history</h2>
+            {%- if customer.orders_count > 0 -%}<span style="font-size:13px;color:var(--mens-muted);">{{ customer.orders_count }} total</span>{%- endif -%}
+          </div>
+          {%- paginate customer.orders by 8 -%}
+            {%- if customer.orders.size > 0 -%}
+              <div class="mens-orders">
+                {%- for order in customer.orders -%}
+                  {%- render 'mens-order-status', order: order, mode: 'row' -%}
+                {%- endfor -%}
+              </div>
+              {%- if paginate.pages > 1 -%}
+                <nav class="mens-pager" aria-label="Order pages">
+                  {%- if paginate.previous -%}<a href="{{ paginate.previous.url }}">‹</a>{%- endif -%}
+                  {%- for part in paginate.parts -%}
+                    {%- if part.is_link -%}<a href="{{ part.url }}">{{ part.title }}</a>
+                    {%- elsif part.title == paginate.current_page -%}<span class="is-current">{{ part.title }}</span>
+                    {%- else -%}<span class="is-gap">{{ part.title }}</span>{%- endif -%}
+                  {%- endfor -%}
+                  {%- if paginate.next -%}<a href="{{ paginate.next.url }}">›</a>{%- endif -%}
+                </nav>
+              {%- endif -%}
+            {%- else -%}
+              <div class="mens-empty" style="padding:40px 20px;">
+                <span class="mens-empty__icon"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/></svg></span>
+                <h2>No orders yet</h2>
+                <p>When you place an order it will show up here.</p>
+                <a href="{{ routes.all_products_collection_url }}" class="mens-btn mens-btn--primary">Start shopping</a>
+              </div>
+            {%- endif -%}
+          {%- endpaginate -%}
+        </div>
+
+        <div>
+          <div class="mens-panel" id="profile">
+            <div class="mens-panel__head"><h2>Profile</h2></div>
+            <div class="mens-kv">
+              <div><span>Name</span><p>{{ customer.name | default: '—' }}</p></div>
+              <div><span>Email</span><p>{{ customer.email }}</p></div>
+              {%- if customer.phone -%}<div><span>Phone</span><p>{{ customer.phone }}</p></div>{%- endif -%}
+              <div><span>Newsletter</span><p>{% if customer.accepts_marketing %}Subscribed{% else %}Not subscribed{% endif %}</p></div>
+            </div>
+          </div>
+
+          <div class="mens-panel">
+            <div class="mens-panel__head">
+              <h2>Default address</h2>
+              <a href="{{ routes.account_addresses_url }}">Manage ({{ customer.addresses_count }})</a>
+            </div>
+            {%- if customer.default_address -%}
+              <address class="mens-address">{{ customer.default_address | format_address }}</address>
+            {%- else -%}
+              <p style="margin:0 0 14px;color:var(--mens-muted);">No address saved yet.</p>
+              <a href="{{ routes.account_addresses_url }}" class="mens-btn mens-btn--ghost mens-btn--sm">Add an address</a>
+            {%- endif -%}
+          </div>
+        </div>
+      </div>
+
+    {%- when 'order' -%}
+      {%- comment -%} ================= ORDER DETAIL ================= {%- endcomment -%}
+      <div class="mens-cartp__head">
+        <div>
+          <h1 class="mens-page__title">Order {{ order.name }}</h1>
+          <p>Placed on {{ order.created_at | date: '%d %b %Y, %I:%M %p' }}</p>
+        </div>
+        <a class="mens-cartp__continue" href="{{ routes.account_url }}">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg>
+          Back to account
+        </a>
+      </div>
+
+      {%- if order.cancelled -%}
+        <div class="mens-alert mens-alert--err">This order was cancelled on {{ order.cancelled_at | date: '%d %b %Y' }}{% if order.cancel_reason_label %} ({{ order.cancel_reason_label }}){% endif %}.</div>
+      {%- endif -%}
+
+      <div class="mens-acct__cols">
+        <div class="mens-panel">
+          <div class="mens-panel__head">
+            <h2>Items</h2>
+            {%- render 'mens-order-status', order: order, mode: 'tags' -%}
+          </div>
+          <div class="mens-orderd__items">
+            {%- for line_item in order.line_items -%}
+              <div class="mens-orderd__item">
+                {%- if line_item.image -%}
+                  {{ line_item.image | image_url: width: 160 | image_tag: loading: 'lazy', alt: line_item.title | escape }}
+                {%- else -%}
+                  <span style="width:72px;height:72px;border-radius:12px;background:var(--mens-soft);display:block;"></span>
+                {%- endif -%}
+                <div>
+                  <h4>{% if line_item.product.url %}<a href="{{ line_item.product.url }}">{{ line_item.title }}</a>{% else %}{{ line_item.title }}{% endif %}</h4>
+                  <p>Qty {{ line_item.quantity }} × {{ line_item.final_price | money }}</p>
+                  {%- if line_item.fulfillment -%}
+                    <p>Shipped {{ line_item.fulfillment.created_at | date: '%d %b' }}
+                      {%- if line_item.fulfillment.tracking_url %} · <a class="mens-link" href="{{ line_item.fulfillment.tracking_url }}" target="_blank" rel="noopener">Track package</a>{% endif -%}
+                    </p>
+                  {%- endif -%}
+                </div>
+                <strong>{{ line_item.final_line_price | money }}</strong>
+              </div>
+            {%- endfor -%}
+          </div>
+
+          <div style="border-top:1px solid var(--mens-line);margin-top:20px;padding-top:16px;display:grid;gap:10px;">
+            <div class="mens-sumrow"><span>Subtotal</span><span>{{ order.line_items_subtotal_price | money }}</span></div>
+            {%- for discount in order.cart_level_discount_applications -%}
+              <div class="mens-sumrow mens-sumrow--disc"><span>Discount ({{ discount.title }})</span><span>−{{ discount.total_allocated_amount | money }}</span></div>
+            {%- endfor -%}
+            {%- for shipping_method in order.shipping_methods -%}
+              <div class="mens-sumrow"><span>Shipping ({{ shipping_method.title }})</span><span>{{ shipping_method.price | money }}</span></div>
+            {%- endfor -%}
+            {%- for tax_line in order.tax_lines -%}
+              <div class="mens-sumrow"><span>Tax ({{ tax_line.title }} {{ tax_line.rate_percentage }}%)</span><span>{{ tax_line.price | money }}</span></div>
+            {%- endfor -%}
+            <div class="mens-sumrow mens-sumrow--total"><span>Total</span><span>{{ order.total_price | money_with_currency }}</span></div>
+          </div>
+        </div>
+
+        <div>
+          {%- if order.order_status_url -%}
+            <a href="{{ order.order_status_url }}" class="mens-btn mens-btn--primary mens-btn--block" style="margin-bottom:16px;">Track this order</a>
+          {%- endif -%}
+          <div class="mens-panel">
+            <div class="mens-panel__head"><h2>Shipping address</h2></div>
+            {%- if order.shipping_address -%}
+              <address class="mens-address">{{ order.shipping_address | format_address }}</address>
+            {%- else -%}<p style="margin:0;color:var(--mens-muted);">No shipping address</p>{%- endif -%}
+          </div>
+          <div class="mens-panel">
+            <div class="mens-panel__head"><h2>Billing address</h2></div>
+            {%- if order.billing_address -%}
+              <address class="mens-address">{{ order.billing_address | format_address }}</address>
+            {%- else -%}<p style="margin:0;color:var(--mens-muted);">No billing address</p>{%- endif -%}
+          </div>
+        </div>
+      </div>
+
+    {%- when 'addresses' -%}
+      {%- comment -%} ================= ADDRESSES ================= {%- endcomment -%}
+      <script src="{{ 'shopify_common.js' | shopify_asset_url }}" defer></script>
+      <div class="mens-cartp__head">
+        <div>
+          <h1 class="mens-page__title">Your addresses</h1>
+          <p>Save addresses for faster checkout.</p>
+        </div>
+        <a class="mens-cartp__continue" href="{{ routes.account_url }}">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg>
+          Back to account
+        </a>
+      </div>
+
+      <div data-mens-addresses>
+        <div class="mens-addr-grid">
+          <button type="button" class="mens-addr mens-addr--new" data-mens-addr-toggle data-target="MensAddrNew">
+            <span class="mens-empty__icon" style="width:52px;height:52px;"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></span>
+            <strong>Add a new address</strong>
+          </button>
+
+          {%- paginate customer.addresses by 12 -%}
+            {%- for address in customer.addresses -%}
+              <div class="mens-addr">
+                <div>
+                  {%- if address == customer.default_address -%}<span class="mens-tag-default">Default</span>{%- endif -%}
+                  <address class="mens-address">{{ address | format_address }}</address>
+                </div>
+                <div class="mens-addr__actions">
+                  <button type="button" data-mens-addr-toggle data-target="MensAddrEdit-{{ address.id }}">Edit</button>
+                  <button type="button" class="is-danger" data-mens-addr-delete data-form="MensAddrDel-{{ address.id }}" data-confirm="Delete this address?">Delete</button>
+                </div>
+                <form id="MensAddrDel-{{ address.id }}" method="post" action="{{ address.url }}" hidden>
+                  <input type="hidden" name="_method" value="delete">
+                </form>
+              </div>
+            {%- endfor -%}
+          {%- endpaginate -%}
+        </div>
+
+        {%- comment -%} New address form {%- endcomment -%}
+        <div class="mens-addr-form" id="MensAddrNew" data-mens-addr-form hidden>
+          {%- form 'customer_address', customer.new_address -%}
+            <h3>New address</h3>
+            {%- render 'mens-address-fields', form: form, key: 'new' -%}
+            <div class="mens-addr-form__btns">
+              <button type="submit" class="mens-btn mens-btn--primary">Save address</button>
+              <button type="button" class="mens-btn mens-btn--ghost" data-mens-addr-toggle data-target="MensAddrNew">Cancel</button>
+            </div>
+          {%- endform -%}
+        </div>
+
+        {%- comment -%} Edit forms {%- endcomment -%}
+        {%- for address in customer.addresses -%}
+          <div class="mens-addr-form" id="MensAddrEdit-{{ address.id }}" data-mens-addr-form hidden>
+            {%- form 'customer_address', address -%}
+              <h3>Edit address</h3>
+              {%- render 'mens-address-fields', form: form, key: address.id -%}
+              <div class="mens-addr-form__btns">
+                <button type="submit" class="mens-btn mens-btn--primary">Update address</button>
+                <button type="button" class="mens-btn mens-btn--ghost" data-mens-addr-toggle data-target="MensAddrEdit-{{ address.id }}">Cancel</button>
+              </div>
+            {%- endform -%}
+          </div>
+        {%- endfor -%}
+      </div>
+    {%- endcase -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Mens account",
+  "tag": "section",
+  "class": "mens-account-section",
+  "enabled_on": { "templates": ["customers/account", "customers/order", "customers/addresses"] },
+  "settings": [
+    { "type": "checkbox", "id": "show_help", "label": "Show Help & support card", "default": true },
+    { "type": "url", "id": "help_url", "label": "Help & support link", "info": "Defaults to /pages/contact" }
+  ]
+}
+{% endschema %}

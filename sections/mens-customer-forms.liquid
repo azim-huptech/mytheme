@@ -1,0 +1,169 @@
+{{ 'mens-theme.css' | asset_url | stylesheet_tag }}
+{{ 'mens-pages.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'mens-pages.js' | asset_url }}" defer></script>
+
+{%- capture check -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12l5 5L20 7"/></svg>{%- endcapture -%}
+
+
+
+<div class="mens-page">
+  <div class="mens-wrap">
+    <div class="mens-auth" data-mens-auth>
+      <div class="mens-auth__side">
+        <div style="position:relative;z-index:1;">
+          <h2>{{ section.settings.side_heading }}</h2>
+          <p>{{ section.settings.side_text }}</p>
+        </div>
+        <ul class="mens-auth__perks">
+          {%- if section.settings.perk_1 != blank -%}<li>{{ check }}{{ section.settings.perk_1 }}</li>{%- endif -%}
+          {%- if section.settings.perk_2 != blank -%}<li>{{ check }}{{ section.settings.perk_2 }}</li>{%- endif -%}
+          {%- if section.settings.perk_3 != blank -%}<li>{{ check }}{{ section.settings.perk_3 }}</li>{%- endif -%}
+        </ul>
+      </div>
+
+      <div class="mens-auth__form">
+        {%- case template.name -%}
+
+        {%- when 'login' -%}
+          <div data-mens-login>
+            <h1>Welcome back</h1>
+            <p>Log in to track orders and check out faster.</p>
+            {%- form 'customer_login', novalidate: 'novalidate' -%}
+              {%- render 'mens-form-errors', form: form -%}
+              <div class="mens-auth__fields">
+                <div>
+                  <label class="mens-label" for="LoginEmail">Email</label>
+                  <input class="mens-input" type="email" id="LoginEmail" name="customer[email]" autocomplete="email" autocapitalize="off" required>
+                </div>
+                {%- if form.password_needed -%}
+                  <div>
+                    <label class="mens-label" for="LoginPassword">Password</label>
+                    <input class="mens-input" type="password" id="LoginPassword" name="customer[password]" autocomplete="current-password" required>
+                  </div>
+                {%- endif -%}
+                <button type="submit" class="mens-btn mens-btn--primary mens-btn--block">Log in</button>
+              </div>
+              <div class="mens-auth__links">
+                {%- if form.password_needed -%}<a href="#recover" class="mens-link" data-mens-show-recover>Forgot password?</a>{%- endif -%}
+              </div>
+            {%- endform -%}
+            <div class="mens-auth__alt">New here? <a href="{{ routes.account_register_url }}">Create an account</a></div>
+          </div>
+
+          <div data-mens-recover hidden>
+            <h1>Reset password</h1>
+            <p>We'll email you a link to set a new password.</p>
+            {%- form 'recover_customer_password' -%}
+              {%- if form.posted_successfully? -%}
+                <div class="mens-alert mens-alert--ok">Check your inbox, we've sent you a reset link.</div>
+              {%- endif -%}
+              {%- render 'mens-form-errors', form: form -%}
+              <div class="mens-auth__fields">
+                <div>
+                  <label class="mens-label" for="RecoverEmail">Email</label>
+                  <input class="mens-input" type="email" id="RecoverEmail" name="email" autocomplete="email" required>
+                </div>
+                <button type="submit" class="mens-btn mens-btn--primary mens-btn--block">Send reset link</button>
+              </div>
+            {%- endform -%}
+            <div class="mens-auth__alt"><a href="#login" data-mens-show-login>Back to login</a></div>
+          </div>
+
+          {%- if shop.checkout.guest_login -%}
+            <div class="mens-auth__alt">
+              {%- form 'guest_login' -%}
+                <button type="submit" class="mens-btn mens-btn--ghost mens-btn--block">Continue as guest</button>
+              {%- endform -%}
+            </div>
+          {%- endif -%}
+
+        {%- when 'register' -%}
+          <h1>Create account</h1>
+          <p>Join us for faster checkout and order tracking.</p>
+          {%- form 'create_customer', novalidate: 'novalidate' -%}
+            {%- render 'mens-form-errors', form: form -%}
+            <div class="mens-auth__fields">
+              <div class="mens-auth__row">
+                <div>
+                  <label class="mens-label" for="RegFirst">First name</label>
+                  <input class="mens-input" type="text" id="RegFirst" name="customer[first_name]" autocomplete="given-name">
+                </div>
+                <div>
+                  <label class="mens-label" for="RegLast">Last name</label>
+                  <input class="mens-input" type="text" id="RegLast" name="customer[last_name]" autocomplete="family-name">
+                </div>
+              </div>
+              <div>
+                <label class="mens-label" for="RegEmail">Email</label>
+                <input class="mens-input" type="email" id="RegEmail" name="customer[email]" autocomplete="email" autocapitalize="off" required>
+              </div>
+              <div>
+                <label class="mens-label" for="RegPassword">Password</label>
+                <input class="mens-input" type="password" id="RegPassword" name="customer[password]" autocomplete="new-password" required>
+              </div>
+              <label class="mens-addr-form__check">
+                <input type="checkbox" name="customer[accepts_marketing]" value="true" checked>
+                Email me new arrivals and offers
+              </label>
+              <button type="submit" class="mens-btn mens-btn--primary mens-btn--block">Create account</button>
+            </div>
+          {%- endform -%}
+          <div class="mens-auth__alt">Already have an account? <a href="{{ routes.account_login_url }}">Log in</a></div>
+
+        {%- when 'reset_password' -%}
+          <h1>Set a new password</h1>
+          <p>Choose a new password for your account.</p>
+          {%- form 'reset_customer_password' -%}
+            {%- render 'mens-form-errors', form: form -%}
+            <div class="mens-auth__fields">
+              <div>
+                <label class="mens-label" for="ResetPassword">New password</label>
+                <input class="mens-input" type="password" id="ResetPassword" name="customer[password]" autocomplete="new-password" required>
+              </div>
+              <div>
+                <label class="mens-label" for="ResetPasswordConfirm">Confirm password</label>
+                <input class="mens-input" type="password" id="ResetPasswordConfirm" name="customer[password_confirmation]" autocomplete="new-password" required>
+              </div>
+              <button type="submit" class="mens-btn mens-btn--primary mens-btn--block">Reset password</button>
+            </div>
+          {%- endform -%}
+
+        {%- when 'activate_account' -%}
+          <h1>Activate your account</h1>
+          <p>Create a password to finish setting up your account.</p>
+          {%- form 'activate_customer_password' -%}
+            {%- render 'mens-form-errors', form: form -%}
+            <div class="mens-auth__fields">
+              <div>
+                <label class="mens-label" for="ActPassword">Password</label>
+                <input class="mens-input" type="password" id="ActPassword" name="customer[password]" autocomplete="new-password" required>
+              </div>
+              <div>
+                <label class="mens-label" for="ActPasswordConfirm">Confirm password</label>
+                <input class="mens-input" type="password" id="ActPasswordConfirm" name="customer[password_confirmation]" autocomplete="new-password" required>
+              </div>
+              <button type="submit" class="mens-btn mens-btn--primary mens-btn--block">Activate account</button>
+              <button type="submit" name="decline" class="mens-btn mens-btn--ghost mens-btn--block">Decline invitation</button>
+            </div>
+          {%- endform -%}
+        {%- endcase -%}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Mens account forms",
+  "tag": "section",
+  "class": "mens-customer-forms-section",
+  "enabled_on": { "templates": ["customers/login", "customers/register", "customers/reset_password", "customers/activate_account"] },
+  "settings": [
+    { "type": "text", "id": "side_heading", "label": "Side panel heading", "default": "Dress sharp. Shop smarter." },
+    { "type": "text", "id": "side_text", "label": "Side panel text", "default": "Your account keeps your orders, addresses and favourites in one place." },
+    { "type": "text", "id": "perk_1", "label": "Perk 1", "default": "Track every order in real time" },
+    { "type": "text", "id": "perk_2", "label": "Perk 2", "default": "Save addresses for 1-click checkout" },
+    { "type": "text", "id": "perk_3", "label": "Perk 3", "default": "Early access to new drops and sales" }
+  ]
+}
+{% endschema %}

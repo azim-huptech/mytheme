@@ -133,66 +133,6 @@
             "badge_text": "",
             "badge_color": "#e03a2f"
           }
-        },
-        "c7": {
-          "type": "circle",
-          "settings": {
-            "collection": "",
-            "link": "",
-            "label": "Hoodies",
-            "badge_text": "",
-            "badge_color": "#e03a2f"
-          }
-        },
-        "c8": {
-          "type": "circle",
-          "settings": {
-            "collection": "",
-            "link": "",
-            "label": "Watches",
-            "badge_text": "",
-            "badge_color": "#e03a2f"
-          }
-        },
-        "c9": {
-          "type": "circle",
-          "settings": {
-            "collection": "",
-            "link": "",
-            "label": "Bags",
-            "badge_text": "",
-            "badge_color": "#e03a2f"
-          }
-        },
-        "c10": {
-          "type": "circle",
-          "settings": {
-            "collection": "",
-            "link": "",
-            "label": "Belts",
-            "badge_text": "",
-            "badge_color": "#e03a2f"
-          }
-        },
-        "c11": {
-          "type": "circle",
-          "settings": {
-            "collection": "",
-            "link": "",
-            "label": "Caps",
-            "badge_text": "",
-            "badge_color": "#e03a2f"
-          }
-        },
-        "c12": {
-          "type": "circle",
-          "settings": {
-            "collection": "",
-            "link": "",
-            "label": "Accessories",
-            "badge_text": "",
-            "badge_color": "#e03a2f"
-          }
         }
       },
       "block_order": [
@@ -201,13 +141,7 @@
         "c3",
         "c4",
         "c5",
-        "c6",
-        "c7",
-        "c8",
-        "c9",
-        "c10",
-        "c11",
-        "c12"
+        "c6"
       ],
       "settings": {
         "eyebrow": "Browse",
@@ -359,7 +293,7 @@
       "settings": {
         "eyebrow": "Most loved",
         "heading": "Best sellers",
-        "collection": "",
+        "collection": "new-arrivals",
         "products_to_show": 8,
         "columns_desktop": "4",
         "view_all_label": "Shop all",

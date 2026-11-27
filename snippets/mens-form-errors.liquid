@@ -1,0 +1,24 @@
+{% doc %}
+  Renders a customer form's errors as an alert box.
+
+  @param {object} form - The form object from inside a {% form %} block.
+
+  @example
+  {% render 'mens-form-errors', form: form %}
+{% enddoc %}
+
+{%- if form.errors -%}
+  <div class="mens-alert mens-alert--err" role="alert">
+    <ul>
+      {%- for field in form.errors -%}
+        <li>
+          {%- if field == 'form' -%}
+            {{ form.errors.messages[field] }}
+          {%- else -%}
+            {{ form.errors.translated_fields[field] | capitalize }} {{ form.errors.messages[field] }}
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+{%- endif -%}
